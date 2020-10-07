@@ -1,6 +1,6 @@
 ---
 title: "Project proposal"
-author: "Team Name: Hannah, Eli, Preetha"
+author: "Fantastic FouR: Hannah, Eli, Preetha"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -24,7 +24,76 @@ spotify_songs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascie
 
 ### Section 1. Introduction
 
+In this project, we will be looking at music on Spotify. While every individual
+has unique tastes in music, there are still songs which are much more popular
+than others. We each independently noticed that the music that goes number 1 on 
+the charts sounds similar even if two different artists make it. Thus, we wanted 
+to explore if there is a formula for making popular music, or if our conceptions 
+are exaggerated. We will do this by investigating various characteristics of
+sound for many songs on Spotify.  
+The general research question we wish to explore is as follows: what 
+characteristics best predict the popularity of a song?  
+We hypothesize that danceability, energy, and loudness are the strongest 
+predictors of the popularity of a song.  
+
+
 ### Section 2. Data description
+
+There are 33,000+ songs in this dataset. Each observation represents  a unique 
+song scored on scales of danceability, energy, loudness, mods, speechiness, 
+acousticness, instrumentalness, liveness, valence, tempo, and duration_ms. These 
+scales range from values of 0 to 1. Each observation also has various 
+descriptors associated with it, including track popularity, key, album name, 
+album release data, and information associated with playlists the song is on. 
+The variable that we have designated as the response is track_popularity, which 
+is a score from 0 to 100 measuring the song’s overall popularity. The raw data
+was collected directly from Spotify, which uses machine learning algorithms to
+evaluate key parameters for each song, such as danceability, energy, etc. Using 
+the package spotifyr, these data points were pulled and saved in a csv file to 
+be used for analysis.  
+
+There are several predictor variables in this dataset, including descriptors 
+(like track and album metadata as well as names for the song and playlists, 
+etc.), continuous variable scores on scales of 0-1.0, and categorical variables 
+regarding modality and key. They are as follows:
+track_name refers to the name of the song. We may use this to identify the most 
+popular songs at the end of our analysis.
+Track_artist refers, of course, to the song artist. We may use this, like track 
+name, to identify if a few artists release the most popular songs (in our 
+dataset).
+Track_album_name refers to the album from which a particular song is from. We 
+may use this to identify if many of the most popular songs come from the same 
+album.
+Track_album_release_date refers to the date when an album is released. We may 
+use this data to filter for songs that are more recent, to cut down on the 
+33,000+ observations that are currently in the dataset to something more 
+manageable.
+Danceability refers to how suitable a track is for dancing, a metric that 
+combines assessments of tempo, beat strength, regularity, etc. This is scored on 
+a scale from 0.0-1.0, with 0.0 being the least danceable.   
+Energy is a measure of how energetic (fast, loud, noisy) a particular song is. 
+0.0 represents the lowest possible energy song.   
+Key is a categorical variable that estimates the overall key of a track. The 
+integers map onto standard Pitch Class notation, with 0 representing C, 1 
+representing C sharp/D flat, etc. If no key is detected, this variable is coded 
+as -1. 
+Loudness refers to the decibel level of the track as averaged across the entire 
+track. They range (approx.) from -60 to 0 dB.   
+Mode refers to a particular song’s modality, whether it is major or minor. Major 
+is coded as 1, while minor is coded as 0.  
+Speechiness refers to the presence of spoken words on a track. The more 
+speechlike (ex. Like poetry, audio book, talk show) the higher the value for 
+speechiness on a scale of 0.0-1.0.   
+Acousticness refers to the probability that the track is acoustic, with 0 being 
+definitely not acoustic and 1 being definitely acoustic.  
+Instrumentalness refers to the probability of vocals on the song, with 0 being 
+there are definitely vocals and 1 being there are definitely no vocals.  
+Liveness refers to the probability a live audience was present at the time of 
+recording the song.  
+Valence refers to the relative “positiveness” of a song on a scale from 0 to 1, 
+with 0 being sad-sounding and 1 being happy-sounding.  
+Tempo refers to the overall average beats per minute (BPM) of the song.    
+Duration_ms refers to the length of the song in milliseconds.
 
 ### Section 3. Glimpse of data 
 ```{r}
