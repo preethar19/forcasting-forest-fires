@@ -19,85 +19,52 @@ library(knitr)
 ```
 
 ```{r load-data}
-spotify_songs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-21/spotify_songs.csv')
+fire <- readr::read_csv('data/all_conditions.csv')
 ```
 
 ### Section 1. Introduction
 
-In this project, we will be looking at music on Spotify. While every individual
-has unique tastes in music, there are still songs which are much more popular
-than others. We each independently noticed that the music that goes number 1 on 
-the charts sounds similar even if two different artists make it. Thus, we wanted 
-to explore if there is a formula for making popular music, or if our conceptions 
-are exaggerated. We will do this by investigating various characteristics of
-sound for many songs on Spotify.  
-The general research question we wish to explore is as follows: what 
-characteristics best predict the popularity of a song?  
-We hypothesize that danceability, energy, and loudness are the strongest 
-predictors of the popularity of a song.  
+For our project, we will be looking at which factors are most dominant in 
+predicting forest fires in the state of California. Climate change represents an existential threat to humanity, and we are already seeing its effects, 
+particularly on America’s west coast. We want to understand the specific factors 
+that contribute to fires to more fully understand what can be done to prevent 
+these tragedies from spreading. The research question we wish to look at is: 
+What are the strongest environmental predictors in forest fires? We think that precipitation, humidity, Eto, and air temperature will all be strongly 
+correlated with forest fires.
+  
 
 
 ### Section 2. Data description
 
-There are 33,000+ songs in this dataset. Each observation represents  a unique 
-song scored on scales of danceability, energy, loudness, mods, speechiness, 
-acousticness, instrumentalness, liveness, valence, tempo, and duration_ms. These 
-scales range from values of 0 to 1. Each observation also has various 
-descriptors associated with it, including track popularity, key, album name, 
-album release data, and information associated with playlists the song is on. 
-The variable that we have designated as the response is track_popularity, which 
-is a score from 0 to 100 measuring the song’s overall popularity. The raw data
-was collected directly from Spotify, which uses machine learning algorithms to
-evaluate key parameters for each song, such as danceability, energy, etc. Using 
-the package spotifyr, these data points were pulled and saved in a csv file to 
-be used for analysis.  
+There are 128,125 observations in the data set. Each observation represents 
+information on the weather conditions on a given weather station on a specific 
+date. Each observation looks at a variety of factors such as Eto, precipitation, 
+solar radiation, average vapor, maximum air temperature, minimum air 
+temperature, average air temperature, maximum humidity, minimum humidity, 
+average humidity, dew points, wind speed, soil temperature. The response 
+variable we will be investigating is Target, which corresponds to fires on the respective observation date, in the observation region. The Target variable is a 
+binary indicator, with a value of 1 indicating there was a fire and a value of 0 
+indicating there was not a fire. Each of the predictors represents a different 
+aspect of the climate in California. Eto looks at the presence of a natural 
+flammable gas, precipitation and solar radiation look at the amount of rain, 
+snow, or sunshine an area will receive on the given day. Average vapor, maximum, 
+minimum and average temperature and humidity, and wind speed represents 
+qualities of the air. Dew points and soil temperature look at factors that 
+impact the ground. This data was scraped from CIMIS (California Irrigation 
+Management Information System) weather stations by github user czaloumi using a 
+selenium chromedriver. The dataset was combined with Wikipedia tables listing 
+California fires by county and city to create the Target column, which indicates 
+whether or not there was a fire on a particular day. Additionally, the curator 
+of the dataset adds that this dataset was “used in conjunction to building an 
+XGBoost Classifier to accurately predict probability for fire given 
+environmental condition feature.”
+  
 
-There are several predictor variables in this dataset, including descriptors 
-(like track and album metadata as well as names for the song and playlists, 
-etc.), continuous variable scores on scales of 0-1.0, and categorical variables 
-regarding modality and key. They are as follows:
-track_name refers to the name of the song. We may use this to identify the most 
-popular songs at the end of our analysis.
-Track_artist refers, of course, to the song artist. We may use this, like track 
-name, to identify if a few artists release the most popular songs (in our 
-dataset).
-Track_album_name refers to the album from which a particular song is from. We 
-may use this to identify if many of the most popular songs come from the same 
-album.
-Track_album_release_date refers to the date when an album is released. We may 
-use this data to filter for songs that are more recent, to cut down on the 
-33,000+ observations that are currently in the dataset to something more 
-manageable.
-Danceability refers to how suitable a track is for dancing, a metric that 
-combines assessments of tempo, beat strength, regularity, etc. This is scored on 
-a scale from 0.0-1.0, with 0.0 being the least danceable.   
-Energy is a measure of how energetic (fast, loud, noisy) a particular song is. 
-0.0 represents the lowest possible energy song.   
-Key is a categorical variable that estimates the overall key of a track. The 
-integers map onto standard Pitch Class notation, with 0 representing C, 1 
-representing C sharp/D flat, etc. If no key is detected, this variable is coded 
-as -1. 
-Loudness refers to the decibel level of the track as averaged across the entire 
-track. They range (approx.) from -60 to 0 dB.   
-Mode refers to a particular song’s modality, whether it is major or minor. Major 
-is coded as 1, while minor is coded as 0.  
-Speechiness refers to the presence of spoken words on a track. The more 
-speechlike (ex. Like poetry, audio book, talk show) the higher the value for 
-speechiness on a scale of 0.0-1.0.   
-Acousticness refers to the probability that the track is acoustic, with 0 being 
-definitely not acoustic and 1 being definitely acoustic.  
-Instrumentalness refers to the probability of vocals on the song, with 0 being 
-there are definitely vocals and 1 being there are definitely no vocals.  
-Liveness refers to the probability a live audience was present at the time of 
-recording the song.  
-Valence refers to the relative “positiveness” of a song on a scale from 0 to 1, 
-with 0 being sad-sounding and 1 being happy-sounding.  
-Tempo refers to the overall average beats per minute (BPM) of the song.    
-Duration_ms refers to the length of the song in milliseconds.
+
 
 ### Section 3. Glimpse of data 
 ```{r}
-glimpse(spotify_songs)
+glimpse(fire)
 ```
 
 
