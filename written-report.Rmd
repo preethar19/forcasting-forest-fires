@@ -46,103 +46,99 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
-```{r}
-ggplot(data = newfire, aes(x = ETo)) +
+```{r fig.width = 15, fig.height = 10}
+p1 <- ggplot(data = newfire, aes(x = ETo)) +
   geom_histogram(stat = "count", fill = "red") +
   labs(x = "ETo (in)",
        y = "Count",
        title = "Distribution of ETo (in)") +
   theme_minimal()
-```
-```{r}
-ggplot(data = newfire, aes(x = precip)) +
-  geom_histogram(stat = "count", fill = "lightblue") +
+
+p2 <- ggplot(data = newfire, aes(x = precip)) +
+  geom_histogram(stat = "count", fill = "black") +
   labs(x = "Precip (in)",
        y = "Count",
        title = "Distribution of Precip (in)") +
   theme_minimal()
-```
-```{r}
-ggplot(data = newfire, aes(x = solrad)) +
+
+p3 <- ggplot(data = newfire, aes(x = solrad)) +
   geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Sol Rad (Ly/day)",
        y = "Count",
        title = "Distribution of Sol Rad (Ly/day)") +
   theme_minimal()
-```
-```{r}
-ggplot(data = newfire, aes(x = avgsoiltemp)) +
-  geom_histogram(stat = "count") +
+
+p4 <- ggplot(data = newfire, aes(x = avgsoiltemp)) +
+  geom_histogram(stat = "count", fill = "brown") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
        title = "Distribution of Avg Soil Temp (F)") +
   theme_minimal()
-```
-```{r}
-ggplot(data = newfire, aes(x = windrun)) +
-  geom_histogram(stat = "count") +
+
+p5 <- ggplot(data = newfire, aes(x = windrun)) +
+  geom_histogram(stat = "count", fill = "green") +
   labs(x = "Wind Run (miles)",
        y = "Count",
-       title = "Distribution of Wind Run (miles)")
-```
-```{r}
-ggplot(data = newfire, aes(x = avgwindspeed)) +
-  geom_histogram(stat = "count") +
+       title = "Distribution of Wind Run (miles)") +
+  theme_minimal()
+
+p6 <- ggplot(data = newfire, aes(x = avgwindspeed)) +
+  geom_histogram(stat = "count", fill = "navyblue") +
   labs(x = "Avg Wind Speed (mph)",
        y = "Count",
-       title = "Distribution of Avg Wind Speed (mph)")
-```
-```{r}
-ggplot(data = newfire, aes(x = dewpoint)) +
-  geom_histogram(stat = "count") +
+       title = "Distribution of Avg Wind Speed (mph)") +
+  theme_minimal()
+
+p7 <- ggplot(data = newfire, aes(x = dewpoint)) +
+  geom_histogram(stat = "count", fill = "pink") +
   labs(x = "Dew Point (F)",
        y = "Count",
-       title = "Distribution of Dew Point (F)")
-```
-```{r}
-ggplot(data = newfire, aes(x = avgrelhum)) +
-  geom_histogram(stat = "count") +
+       title = "Distribution of Dew Point (F)") +
+  theme_minimal()
+
+p8 <- ggplot(data = newfire, aes(x = avgrelhum)) +
+  geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Avg Relative Humidity (%)",
        y = "Count",
-       title = "Distribution of Avg Relative Humidity (%)")
-```
-```{r}
-ggplot(data = newfire, aes(x = minrelhum)) +
+       title = "Distribution of Avg Relative Humidity (%)") +
+  theme_minimal()
+
+p9 <- ggplot(data = newfire, aes(x = minrelhum)) +
   geom_histogram(stat = "count") +
   labs(x = "Min Relative Humidity (%)",
        y = "Count",
-       title = "Distribution of Min Relative Humidity (%)")
-```
-```{r}
-ggplot(data = newfire, aes(x = maxrelhum)) +
-  geom_histogram(stat = "count") +
+       title = "Distribution of Min Relative Humidity (%)") +
+  theme_minimal()
+
+p10 <- ggplot(data = newfire, aes(x = maxrelhum)) +
+  geom_histogram(stat = "count", fill = "black") +
   labs(x = "Max Relative Humidity (%)",
        y = "Count",
-       title = "Distribution of Max Relative Humidity (%)")
-```
-```{r}
-ggplot(data = newfire, aes(x = avgvappress)) +
+       title = "Distribution of Max Relative Humidity (%)") +
+  theme_minimal()
+
+p11 <- ggplot(data = newfire, aes(x = avgvappress)) +
   geom_histogram(stat = "count", fill = "purple") +
   labs(x = "Avg Vap Pres (mBars)",
        y = "Count",
        title = "Distribution of Avg Vap Pres (mBars)") +
   theme_minimal()
-```
-```{r}
-ggplot(data = newfire, aes(x = maxairtemp)) +
+
+p12 <- ggplot(data = newfire, aes(x = maxairtemp)) +
   geom_histogram(stat = "count", fill = "blue") +
   labs(x = "Max Air Temp (F)",
        y = "Count",
        title = "Distribution of Max Air Temp (F)") +
   theme_minimal()
-```
-```{r}
-ggplot(data = newfire, aes(x = minairtemp)) +
+
+p13 <- ggplot(data = newfire, aes(x = minairtemp)) +
   geom_histogram(stat = "count", fill = "lightblue") +
   labs(x = "Min Air Temp (F)",
        y = "Count",
        title = "Distribution of Min Air Temp (F)") +
   theme_minimal()
+
+(p1 + p2 + p3)/ (p4 + p5 + p6 + p7) + (p8 + p9 + p10)/(p11 + p12 + p13)
 ```
 
 
