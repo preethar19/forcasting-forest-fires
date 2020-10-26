@@ -31,7 +31,21 @@ We started by creating distribution plots for each of the continuous variables.
 
 
 ```{r}
-ggplot(data = fire, aes(x = 'Avg Soil Temp (F)')) +
+fire <- fire %>%
+  mutate(avgsoiltemp = `Avg Soil Temp (F)`,
+         windrun = `Wind Run (miles)`,
+         avgwindspeed = `Avg Wind Speed (mph)`,
+         dewpoint = `Dew Point (F)`,
+         avgrelhum = `Avg Rel Hum (%)`,
+         minrelhum = `Min Rel Hum (%)`,
+         maxrelhum = `Max Rel Hum (%)`,
+         avgairtemp = `Avg Air Temp (F)`,
+         minairtemp = `Min Air Temp (F)`)
+```
+
+
+```{r}
+ggplot(data = fire, aes(x = Avg Soil Temp (F))) +
   geom_histogram(stat = "count") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
