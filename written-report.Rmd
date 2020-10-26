@@ -57,6 +57,8 @@ ggplot(data = newfire, aes(x = ETo)) +
 ```{r}
 ggplot(data = newfire, aes(x = precip)) +
   geom_histogram(stat = "count", fill = "lightblue") +
+  xlim(0,0.5) +
+  ylim(0,1000) +
   labs(x = "Precip (in)",
        y = "Count",
        title = "Distribution of Precip (in)") +
