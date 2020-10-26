@@ -13,11 +13,20 @@ knitr::opts_chunk$set(echo = FALSE,
 
 Your written report goes here! Before you submit, make sure your code chunks are turned off with `echo = FALSE` and there are no warnings or messages with `warning = FALSE` and `message = FALSE` 
 
+```{r load-packages}
+library(tidyverse)
+library(broom)
+library(patchwork)
+library(knitr)
+```
+
+```{r load-data}
+fire <- readr::read_csv('data/all_conditions.csv')
+```
+
 ###Introduction
 
 We started by creating distribution plots for each of the continuous variables.
 
-```{r}
 
-```
 
