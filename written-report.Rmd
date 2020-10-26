@@ -48,10 +48,52 @@ newfire <- fire %>%
 
 
 ```{r}
-ggplot(data = fire, aes(x = Avg Soil Temp (F))) +
+ggplot(data = newfire, aes(x = avgsoiltemp)) +
   geom_histogram(stat = "count") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
        title = "Distribution of Avg Soil Temp (F)")
+```
+```{r}
+ggplot(data = newfire, aes(x = windrun)) +
+  geom_histogram(stat = "count") +
+  labs(x = "Wind Run (miles)",
+       y = "Count",
+       title = "Distribution of Wind Run (miles)")
+```
+```{r}
+ggplot(data = newfire, aes(x = avgwindspeed)) +
+  geom_histogram(stat = "count") +
+  labs(x = "Avg Wind Speed (mph)",
+       y = "Count",
+       title = "Distribution of Avg Wind Speed (mph)")
+```
+```{r}
+ggplot(data = newfire, aes(x = dewpoint)) +
+  geom_histogram(stat = "count") +
+  labs(x = "Dew Point (F)",
+       y = "Count",
+       title = "Distribution of Dew Point (F)")
+```
+```{r}
+ggplot(data = newfire, aes(x = avgrelhum)) +
+  geom_histogram(stat = "count") +
+  labs(x = "Avg Relative Humidity (%)",
+       y = "Count",
+       title = "Distribution of Avg Relative Humidity (%)")
+```
+```{r}
+ggplot(data = newfire, aes(x = minrelhum)) +
+  geom_histogram(stat = "count") +
+  labs(x = "Min Relative Humidity (%)",
+       y = "Count",
+       title = "Distribution of Min Relative Humidity (%)")
+```
+```{r}
+ggplot(data = newfire, aes(x = maxrelhum)) +
+  geom_histogram(stat = "count") +
+  labs(x = "Max Relative Humidity (%)",
+       y = "Count",
+       title = "Distribution of Max Relative Humidity (%)")
 ```
 
