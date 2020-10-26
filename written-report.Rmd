@@ -46,12 +46,57 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
+```{r}
+ggplot(data = newfire, aes(x = ETo)) +
+  geom_histogram(stat = "count", fill = "red") +
+  labs(x = "ETo (in)",
+       y = "Count",
+       title = "Distribution of ETo (in)") +
+  theme_minimal()
+```
 
 ```{r}
-ggplot(data = fire, aes(x = Avg Soil Temp (F))) +
-  geom_histogram(stat = "count") +
-  labs(x = "Avg Soil Temp (F)",
+ggplot(data = newfire, aes(x = precip)) +
+  geom_histogram(stat = "count", fill = "lightblue") +
+  labs(x = "Precip (in)",
        y = "Count",
-       title = "Distribution of Avg Soil Temp (F)")
+       title = "Distribution of Precip (in)") +
+  theme_minimal()
 ```
+
+```{r}
+ggplot(data = newfire, aes(x = solrad)) +
+  geom_histogram(stat = "count", fill = "orange") +
+  labs(x = "Sol Rad (Ly/day)",
+       y = "Count",
+       title = "Distribution of Sol Rad (Ly/day)") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(data = newfire, aes(x = avgvappress)) +
+  geom_histogram(stat = "count", fill = "purple") +
+  labs(x = "Avg Vap Pres (mBars)",
+       y = "Count",
+       title = "Distribution of Avg Vap Pres (mBars)") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(data = newfire, aes(x = maxairtemp)) +
+  geom_histogram(stat = "count", fill = "blue") +
+  labs(x = "Max Air Temp (F)",
+       y = "Count",
+       title = "Distribution of Max Air Temp (F)") +
+  theme_minimal()
+```
+```{r}
+ggplot(data = newfire, aes(x = minairtemp)) +
+  geom_histogram(stat = "count", fill = "lightblue") +
+  labs(x = "Min Air Temp (F)",
+       y = "Count",
+       title = "Distribution of Min Air Temp (F)") +
+  theme_minimal()
+```
+
 
