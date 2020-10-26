@@ -1,7 +1,7 @@
 ---
-title: "Your project title"
-author: "Team Name: Team member 1, Team member 2, Team member 3, Team member 4"
-date: "Update date"
+title: "forcasting forest fires"
+author: "fantastic fouR: Eli Levine, Hannah Long, Preetha Ramachandran"
+date: "Oct. 26, 2020"
 output: pdf_document
 ---
 
@@ -12,4 +12,12 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 Your written report goes here! Before you submit, make sure your code chunks are turned off with `echo = FALSE` and there are no warnings or messages with `warning = FALSE` and `message = FALSE` 
+
+###Introduction
+
+We started by creating distribution plots for each of the continuous variables.
+
+```{r}
+
+```
 
