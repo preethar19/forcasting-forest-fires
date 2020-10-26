@@ -29,17 +29,13 @@ fire <- readr::read_csv('data/all_conditions.csv')
 We started by creating distribution plots for each of the continuous variables. Because some of the predictor names have parentheses that aren't compatible with R, we renamed some of the variables. 
 
 ```{r}
-fire <- fire %>% 
+newfire <- fire %>% 
   mutate(ETo = `ETo (in)`,
          precip = `Precip (in)`,
          solrad = `Sol Rad (Ly/day)`,
          avgvappress = `Avg Vap Pres (mBars)`,
-         maxairtemp = `Max Air Temp (F)`)
-```
-
-```{r}
-fire <- fire %>%
-  mutate(avgsoiltemp = `Avg Soil Temp (F)`,
+         maxairtemp = `Max Air Temp (F)`,
+         avgsoiltemp = `Avg Soil Temp (F)`,
          windrun = `Wind Run (miles)`,
          avgwindspeed = `Avg Wind Speed (mph)`,
          dewpoint = `Dew Point (F)`,
