@@ -183,7 +183,11 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
 ((narrative about the conditions that need to be checked, linearity, randomness, independence))
 
 ((LINEARITY))
-```{r}
+
+
+```{r fig.width = 7, fig.height = 3}
+
+
 emplogitplot1(Target ~ ETo, data = newestfire, 
                   ngroups = 10)
 emplogitplot1(Target ~ solrad, data = newestfire, 
@@ -204,6 +208,7 @@ emplogitplot1(Target ~ avgairtemp, data = newestfire,
                   ngroups = 5)
 emplogitplot1(Target ~ precip, data = newestfire, 
                  ngroups = 2)
+
 ```
 ((we are looking for a linear relationship and we don't see that in avgwindspeed, avgrelhum. also plot for precip only calculated if ngroups is set to 2 and that doesn't tell us much))
 
