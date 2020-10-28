@@ -228,13 +228,25 @@ tidy(fire_model)
 vif(fire_model)
 ```
 ((multicollinearity first, then see if add square terms and interactions. mean center variables))
-(("average average" for interpret)) ((drop-in deviance to see what variables are significant))
+
+```{r}
+#removed variables with high multicollinearity: solrad, dewpoint
+main_fire_model <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avgairtemp, data = newestfire, 
+                  family = "binomial")
+tidy(main_fire_model)
+```
+```{r}
+vif(main_fire_model)
+```
+
+
+((drop-in deviance to see what variables are significant))
 ((ROC curve to find threshold for prediciton "final model"))
 ```{r}
-new_fire_model <- step(fire_model, direction = "backward")
+new_fire_model <- step(main_fire_model, direction = "backward")
 tidy(new_fire_model, conf.int = TRUE)
 ```
-((This model only has two predictors, so we transformed some variables to see if that would give further insight. quadratic trans formation for wind speed and humidity, by looking at empirical log plot and observing shape))
+((This model only has three predictors, so we transformed some variables to see if that would give further insight. quadratic trans formation for wind speed and humidity, by looking at empirical log plot and observing shape))
 
 ```{r}
 glance(new_fire_model)%>%
@@ -245,7 +257,8 @@ glance(new_fire_model)%>%
 
 
 ```{r}
-fire_model2 <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + dewpoint + avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), data = newestfire, 
+#main model, with quadratic transformation on avgwindspeed and avgrelhum
+fire_model2 <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), data = newestfire, 
                   family = "binomial")
 tidy(fire_model2)
 ```
@@ -259,32 +272,24 @@ tidy(fire_model3, conf.int = TRUE)
 glance(fire_model3)
 ```
 
-```{r}
-library(rms)
-vif(fire_model3)
-```
+With quadratic transformed variables, AIC has marginal improvement, but BIC is
+larger. So, it is optimal to stick with the model without quadratic 
+transformation of variables.
 
 ```{r}
-fire_model4 <- glm(Target ~ ETo + solrad * avgsoiltemp + avgvappress + avgairtemp + avgwindspeed + I(avgwindspeed^2) * windrun + avgrelhum + I(avgrelhum^2) * dewpoint, data = newestfire, 
+interaction_fire_model <- glm(Target ~ ETo + avgsoiltemp * avgairtemp + avgvappress + avgwindspeed * windrun + avgrelhum, data = newestfire, 
                   family = "binomial")
-tidy(fire_model4)
+tidy(interaction_fire_model)
 ```
 ```{r}
-vif(fire_model4)
+anova(main_fire_model, interaction_fire_model, test = "Chisq") %>%
+  tidy()
 ```
+High p-value, so the data provide insufficient evidence to conclude the interaction
+terms are statistically significant. 
 
-
-```{r}
-fire_model5 <- step(fire_model4, direction = "backward")
-tidy(fire_model5, conf.int = TRUE)
-```
-```{r}
-glance(fire_model5)
-```
-
-
-
-
+After all these analyses/tests, our ultimate best model is new_fire_model (main
+effect model and backwards selection)
 
 
 ------------ notes -------------------------------------------------------------
