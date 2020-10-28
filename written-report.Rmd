@@ -228,8 +228,43 @@ tidy(fire_model)
 new_fire_model <- step(fire_model, direction = "backward")
 tidy(new_fire_model, conf.int = TRUE)
 ```
-((This model only has two predictors))
+((This model only has two predictors, so we transformed some variables to see if that would give further insight. quadratic trans formation for wind speed and humidity, by looking at empirical log plot and observing shape))
 
+```{r}
+glance(new_fire_model)%>%
+  select(AIC, BIC)
+```
+
+((AIC, BIC, Adj R to determine ))
+
+
+```{r}
+fire_model2 <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + dewpoint + avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), data = newestfire, 
+                  family = "binomial")
+tidy(fire_model2)
+```
+
+```{r}
+fire_model3 <- step(fire_model2, direction = "backward")
+tidy(fire_model3, conf.int = TRUE)
+```
+
+```{r}
+glance(fire_model3)
+```
+
+```{r}
+fire_model4 <- glm(Target ~ ETo + solrad * avgsoiltemp + avgvappress + avgairtemp + I(avgwindspeed^2) * windrun + I(avgrelhum^2) * dewpoint, data = newestfire, 
+                  family = "binomial")
+tidy(fire_model4)
+```
+```{r}
+fire_model5 <- step(fire_model4, direction = "backward")
+tidy(fire_model5, conf.int = TRUE)
+```
+```{r}
+glance(fire_model5)
+```
 
 
 
