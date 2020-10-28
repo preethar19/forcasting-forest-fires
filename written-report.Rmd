@@ -53,18 +53,11 @@ p1 <- ggplot(data = newfire, aes(x = ETo)) +
        y = "Count",
        title = "Distribution of ETo (in)") +
   theme_minimal()
-<<<<<<< HEAD
 
 p2 <- ggplot(data = newfire, aes(x = precip)) +
-  geom_histogram(stat = "count", fill = "black") +
-=======
-```
-```{r}
-ggplot(data = newfire, aes(x = precip)) +
   geom_histogram(stat = "count", fill = "lightblue") +
   xlim(0,0.5) +
   ylim(0,1000) +
->>>>>>> 7ab897bd1fc12609fc2c77e1ecc26c4f5990d5f0
   labs(x = "Precip (in)",
        y = "Count",
        title = "Distribution of Precip (in)") +
@@ -150,4 +143,12 @@ p13 <- ggplot(data = newfire, aes(x = minairtemp)) +
 (p1 + p2 + p3)/ (p4 + p5 + p6 + p7) + (p8 + p9 + p10)/(p11 + p12 + p13)
 ```
 
+- picked variables that need transformation (rel humidity, sol rad, precip) - log transform?
+- build model, backward assumption
+- randn
 
+group by
+for each dataset
+randomly generate number
+slice that observation
+new data frame
