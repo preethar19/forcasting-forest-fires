@@ -20,6 +20,7 @@ library(patchwork)
 library(knitr)
 library(yardstick)
 library(Stat2Data)
+library(rms)
 ```
 
 ```{r load-data}
@@ -223,7 +224,12 @@ fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
                   family = "binomial")
 tidy(fire_model)
 ```
-
+```{r}
+vif(fire_model)
+```
+((multicollinearity first, then see if add square terms and interactions. mean center variables))
+(("average average" for interpret)) ((drop-in deviance to see what variables are significant))
+((ROC curve to find threshold for prediciton "final model"))
 ```{r}
 new_fire_model <- step(fire_model, direction = "backward")
 tidy(new_fire_model, conf.int = TRUE)
@@ -254,10 +260,20 @@ glance(fire_model3)
 ```
 
 ```{r}
-fire_model4 <- glm(Target ~ ETo + solrad * avgsoiltemp + avgvappress + avgairtemp + I(avgwindspeed^2) * windrun + I(avgrelhum^2) * dewpoint, data = newestfire, 
+library(rms)
+vif(fire_model3)
+```
+
+```{r}
+fire_model4 <- glm(Target ~ ETo + solrad * avgsoiltemp + avgvappress + avgairtemp + avgwindspeed + I(avgwindspeed^2) * windrun + avgrelhum + I(avgrelhum^2) * dewpoint, data = newestfire, 
                   family = "binomial")
 tidy(fire_model4)
 ```
+```{r}
+vif(fire_model4)
+```
+
+
 ```{r}
 fire_model5 <- step(fire_model4, direction = "backward")
 tidy(fire_model5, conf.int = TRUE)
