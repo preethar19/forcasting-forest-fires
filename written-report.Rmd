@@ -18,6 +18,8 @@ library(tidyverse)
 library(broom)
 library(patchwork)
 library(knitr)
+library(yardstick)
+library(Stat2Data)
 ```
 
 ```{r load-data}
@@ -46,109 +48,212 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
-```{r fig.width = 15, fig.height = 10}
-p1 <- ggplot(data = newfire, aes(x = ETo)) +
+((narrative about why we had to create a new data frame with only one observation per station. something about how it's down to 153 observations but how that's still okay))
+
+```{r}
+set.seed(19)
+
+newestfire <- newfire %>% 
+  group_by(`Stn Id`) %>% 
+  sample_n(1, replace = TRUE)
+```
+
+((narrative about getting rid of observations with missing values. something about how it's down to 143 observations but that's still okay!!))
+
+```{r}
+newestfire <- newestfire %>% 
+  drop_na()
+```
+
+((narrative about how we wanted to look at the distributions of all of the response variables to get an idea of what they look like post data cleaning))
+
+```{r fig.width = 15, fig.height = 15}
+p1 <- ggplot(data = newestfire, aes(x = ETo)) +
   geom_histogram(stat = "count", fill = "red") +
   labs(x = "ETo (in)",
        y = "Count",
        title = "Distribution of ETo (in)") +
   theme_minimal()
 
-p2 <- ggplot(data = newfire, aes(x = precip)) +
+p2 <- ggplot(data = newestfire, aes(x = precip)) +
   geom_histogram(stat = "count", fill = "lightblue") +
   xlim(0,0.5) +
-  ylim(0,1000) +
+  ylim(0,10) +
   labs(x = "Precip (in)",
        y = "Count",
        title = "Distribution of Precip (in)") +
   theme_minimal()
 
-p3 <- ggplot(data = newfire, aes(x = solrad)) +
+p3 <- ggplot(data = newestfire, aes(x = solrad)) +
   geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Sol Rad (Ly/day)",
        y = "Count",
        title = "Distribution of Sol Rad (Ly/day)") +
   theme_minimal()
 
-p4 <- ggplot(data = newfire, aes(x = avgsoiltemp)) +
+p4 <- ggplot(data = newestfire, aes(x = avgsoiltemp)) +
   geom_histogram(stat = "count", fill = "brown") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
        title = "Distribution of Avg Soil Temp (F)") +
   theme_minimal()
 
-p5 <- ggplot(data = newfire, aes(x = windrun)) +
+p5 <- ggplot(data = newestfire, aes(x = windrun)) +
   geom_histogram(stat = "count", fill = "green") +
   labs(x = "Wind Run (miles)",
        y = "Count",
        title = "Distribution of Wind Run (miles)") +
   theme_minimal()
 
-p6 <- ggplot(data = newfire, aes(x = avgwindspeed)) +
+p6 <- ggplot(data = newestfire, aes(x = avgwindspeed)) +
   geom_histogram(stat = "count", fill = "navyblue") +
   labs(x = "Avg Wind Speed (mph)",
        y = "Count",
        title = "Distribution of Avg Wind Speed (mph)") +
   theme_minimal()
 
-p7 <- ggplot(data = newfire, aes(x = dewpoint)) +
+p7 <- ggplot(data = newestfire, aes(x = dewpoint)) +
   geom_histogram(stat = "count", fill = "pink") +
   labs(x = "Dew Point (F)",
        y = "Count",
        title = "Distribution of Dew Point (F)") +
   theme_minimal()
 
-p8 <- ggplot(data = newfire, aes(x = avgrelhum)) +
+p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
   geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Avg Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Avg Relative Humidity (%)") +
   theme_minimal()
 
-p9 <- ggplot(data = newfire, aes(x = minrelhum)) +
+p9 <- ggplot(data = newestfire, aes(x = minrelhum)) +
   geom_histogram(stat = "count") +
   labs(x = "Min Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Min Relative Humidity (%)") +
   theme_minimal()
 
-p10 <- ggplot(data = newfire, aes(x = maxrelhum)) +
+p10 <- ggplot(data = newestfire, aes(x = maxrelhum)) +
   geom_histogram(stat = "count", fill = "black") +
   labs(x = "Max Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Max Relative Humidity (%)") +
   theme_minimal()
 
-p11 <- ggplot(data = newfire, aes(x = avgvappress)) +
+p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
   geom_histogram(stat = "count", fill = "purple") +
   labs(x = "Avg Vap Pres (mBars)",
        y = "Count",
        title = "Distribution of Avg Vap Pres (mBars)") +
   theme_minimal()
 
-p12 <- ggplot(data = newfire, aes(x = maxairtemp)) +
+p12 <- ggplot(data = newestfire, aes(x = maxairtemp)) +
   geom_histogram(stat = "count", fill = "blue") +
   labs(x = "Max Air Temp (F)",
        y = "Count",
        title = "Distribution of Max Air Temp (F)") +
   theme_minimal()
 
-p13 <- ggplot(data = newfire, aes(x = minairtemp)) +
+p13 <- ggplot(data = newestfire, aes(x = minairtemp)) +
   geom_histogram(stat = "count", fill = "lightblue") +
   labs(x = "Min Air Temp (F)",
        y = "Count",
        title = "Distribution of Min Air Temp (F)") +
   theme_minimal()
 
-(p1 + p2 + p3)/ (p4 + p5 + p6 + p7) + (p8 + p9 + p10)/(p11 + p12 + p13)
+p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
+  geom_histogram(stat = "count", fill = "hotpink") +
+  labs(x = "Avg Air Temp (F)",
+       y = "Count",
+       title = "Distribution of Avg Air Temp (F)") +
+  theme_minimal()
+
+(p1 + p2 + p3)/(p4 + p5) + (p6 + p7)/(p8 + p9 + p10) + (p11 + p12) + (p13 + p14)
+```
+((general descriptions of what each of the plots look like (shape, center, spread, distribution), attribute all weird distributions to fewer data points))
+
+
+### Methodology
+
+((narrative about how we are tossing out min and max distributions and keeping averages because of multicollinarity (take from tackett's email)))
+
+((narrative about what we're trying to do here (predict) and explain why a logistic regression is used for that (binary prediction - fire vs no fire)))
+
+((narrative about the conditions that need to be checked, linearity, randomness, independence))
+
+((LINEARITY))
+```{r}
+emplogitplot1(Target ~ ETo, data = newestfire, 
+                  ngroups = 10)
+emplogitplot1(Target ~ solrad, data = newestfire, 
+                  ngroups = 10)
+emplogitplot1(Target ~ avgvappress, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgsoiltemp, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ windrun, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgwindspeed, data = newestfire, 
+                  ngroups = 10)
+emplogitplot1(Target ~ dewpoint, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgrelhum, data = newestfire, 
+                  ngroups = 10)
+emplogitplot1(Target ~ avgairtemp, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ precip, data = newestfire, 
+                 ngroups = 2)
+```
+((we are looking for a linear relationship and we don't see that in avgwindspeed, avgrelhum. also plot for precip only calculated if ngroups is set to 2 and that doesn't tell us much))
+
+((RANDOMNESS))
+
+((narrative along the lines of the way the data itself was collected is not random but the way we cleaned it and created a new data frame helps to account for that))
+
+((INDEPENDENCE))
+
+((narrative along the lines of the way the data itself was collected does not lend itself to independent observations but the way we cleaned it and created a new data frame helps to account for that))
+
+
+
+((we then started to build models. for our first model, we tossed out the predictor variables that do not have a linear relationship with response used backwards selection to build a model with everything else))
+
+```{r}
+fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + dewpoint + avgairtemp, data = newestfire, 
+                  family = "binomial")
+tidy(fire_model)
 ```
 
-- picked variables that need transformation (rel humidity, sol rad, precip) - log transform?
-- build model, backward assumption
-- randn
+```{r}
+new_fire_model <- step(fire_model, direction = "backward")
+tidy(new_fire_model, conf.int = TRUE)
+```
+((This model only has two predictors))
 
-group by
-for each dataset
-randomly generate number
-slice that observation
-new data frame
+
+
+
+
+
+
+------------ notes -------------------------------------------------------------
+- picked variables that need transformation (rel humidity, sol rad, precip) 
+      - log transform?
+- build model, backward assumption
+
+
+variables we want to keep:
+- average humidity
+multicollinearity w min and max, we think humidity prob has some effect on fire (water in air???)
+- avg air temp 
+multicolinearity w min and max air temp
+
+things to do after building model w everything:
+- log transform precipitaion??
+it looks funny
+- sol radiation
+closely related to soil temperature (MAKE PLOT FOR THIS FIRST)
+- dew point//temperature//humidity
+- wind run//wind speed
+
+
