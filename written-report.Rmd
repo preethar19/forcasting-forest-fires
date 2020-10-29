@@ -27,9 +27,40 @@ library(rms)
 fire <- readr::read_csv('data/all_conditions.csv')
 ```
 
-###Introduction
+### Introduction
 
-We started by creating distribution plots for each of the continuous variables. Because some of the predictor names have parentheses that aren't compatible with R, we renamed some of the variables. 
+Climate change represents an existential threat to humanity. Its effects have 
+the potential to dramatically shape life as we know it, creating climate refugees, 
+resource wars, and submerging major cities around the globe. However, unlike 
+previous challenges to our way of life, the threat of climate change will not 
+manifest in a single event, rather in a series of natural disasters that will 
+eventually escalate to a point where we no longer have the resources to manage 
+them. This is being seen already in California as wildfires sweep the state, 
+forcing people to relocate, causing issues with access and use of electricity and 
+causing an estimated $10 billion in damages. Thus, in our project, we plan to 
+determine what are the strongest environmental predictors of forest fires by 
+looking at data from California. 
+
+It is important to understand what these predictors are to determine how to 
+prevent short term fires from escalating and to correct these conditions in the 
+long run to see if it is possible to mitigate the threat of these fires going 
+forward. If we know what predictors play a role in a fire, it can help authorities 
+better understand what days or seasons present a higher risk, and thus prepare 
+accordingly. While climate change will continue to affect our way of life, 
+insights into how to manage its consequences and effects will help us plan for 
+both the short term and long term future, at least until policy and research 
+catch up to the severity of the issue.
+
+The data we will be using was scraped from CIMIS (California Irrigation 
+Management Information System) weather stations by github user czaloumi using a 
+selenium chromedriver. The dataset was combined with Wikipedia tables listing 
+California fires by county and city to create the Target column, which indicates 
+whether or not there was a fire on a particular day. Additionally, the curator 
+of the dataset adds that this dataset was “used in conjunction to building an 
+XGBoost Classifier to accurately predict probability for fire given environmental 
+condition feature.” This user’s data contains a mixture of environmental and 
+geospatial data to understand the size and the scope of the forest fires, as well 
+as where the fires seem to be most frequent.
 
 ```{r}
 newfire <- fire %>% 
@@ -49,7 +80,13 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
-((narrative about why we had to create a new data frame with only one observation per station. something about how it's down to 153 observations but how that's still okay))
+However, due to the size and scope of our data set, we decided to adjust 
+accordingly. Each of the stations in our data contains data between 2018 and 
+summer 2020. To correct for this, we will be randomly selecting a day from each 
+of the sections within this range, and focusing more so on what each station 
+reported from its respective day. This will give us 153 observations instead of 
+128,126. We decided that trimming it down would not only reduce the data, but 
+also reduce the noise. 
 
 ```{r}
 set.seed(19)
@@ -59,14 +96,21 @@ newestfire <- newfire %>%
   sample_n(1, replace = TRUE)
 ```
 
-((narrative about getting rid of observations with missing values. something about how it's down to 143 observations but that's still okay!!))
+From day-to-day in a station it is unlikely that there is 
+substantial variation, however when comparing station to station over different 
+days, we are able to see different variables from all times of the year.
+However, there was still some missing data, so our total number of observations 
+has been further reduced to 143, from stations all across the state of California.
+
 
 ```{r}
 newestfire <- newestfire %>% 
   drop_na()
 ```
 
-((narrative about how we wanted to look at the distributions of all of the response variables to get an idea of what they look like post data cleaning))
+Our first step of our exploratory data analysis was to look at the shape of the
+distributions of each variable. This would give us a sense about which 
+transformations might be necessary.
 
 ```{r fig.width = 15, fig.height = 15}
 p1 <- ggplot(data = newestfire, aes(x = ETo)) +
@@ -171,19 +215,27 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
 
 (p1 + p2 + p3)/(p4 + p5) + (p6 + p7)/(p8 + p9 + p10) + (p11 + p12) + (p13 + p14)
 ```
-((general descriptions of what each of the plots look like (shape, center, spread, distribution), attribute all weird distributions to fewer data points))
-
+In general it appears as thought the data points tend to follow a normal 
+distribution.  However, not all normal distributions are made equal. Maximum 
+relative humidity appears to be left skewed, while precipitation appears to be 
+right skewed. While it appears that some have multiple peaks and unique spreads 
+and distributions this is likely due to limited data points.
 
 ### Methodology
 
-((narrative about how we are tossing out min and max distributions and keeping averages because of multicollinarity (take from tackett's email)))
+To reduce the multicollinearity, we decided to focus on only 
+specific variables. For example, the dataset included the average, minimum and 
+maximum for a number of variables. We determined that average was likely most 
+relevant to the conditions recorded by each station throughout the day.
 
-((narrative about what we're trying to do here (predict) and explain why a logistic regression is used for that (binary prediction - fire vs no fire)))
+Since we are trying to predict with a binary response variable, we will use a 
+logisitic regression. However, to be able to use a logisitic regression we need
+to check the conditions, and ensure that the data satsifies linearity, randomness
+and independence.
 
-((narrative about the conditions that need to be checked, linearity, randomness, independence))
 
-((LINEARITY))
-
+To check linearity, we will make an empirical logisrtic regression plot for each 
+of the predictor variables.
 
 ```{r fig.width = 7, fig.height = 3}
 
@@ -210,29 +262,35 @@ emplogitplot1(Target ~ precip, data = newestfire,
                  ngroups = 2)
 
 ```
-((we are looking for a linear relationship and we don't see that in avgwindspeed, avgrelhum. also plot for precip only calculated if ngroups is set to 2 and that doesn't tell us much))
+After looking at these graphs, it is apparent that average wind speed, and average
+relative humidity do not follow a linear relationship. Furthermore, linearity is
+only satisfied for precipitation when there are only 2 groups. This means that a
+linear model might not be an appropriate estimation for precipitation.
 
-((RANDOMNESS))
+A lot of the data in the dataset is conditional instead of random. The conditions 
+recorded by one station will likely be similar to those in a nearby station and 
+similar to the recordings the day before. To correct for that, we took a random 
+sample of the days in our data set. This also supports independence. Our cleaning 
+of the data to include a random sample of days and stations.
 
-((narrative along the lines of the way the data itself was collected is not random but the way we cleaned it and created a new data frame helps to account for that))
-
-((INDEPENDENCE))
-
-((narrative along the lines of the way the data itself was collected does not lend itself to independent observations but the way we cleaned it and created a new data frame helps to account for that))
-
-
-
-((we then started to build models. for our first model, we tossed out the predictor variables that do not have a linear relationship with response used backwards selection to build a model with everything else))
+Now that we have cleaned the data and satisfied the conditions of logistic 
+regression, we began to build prediction models, and eliminated the variables 
+that do not satisfy the conditions. Then we will use backward selection to reduce 
+the data.
 
 ```{r}
 fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + dewpoint + avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(fire_model)
 ```
+
 ```{r}
 vif(fire_model)
 ```
-((multicollinearity first, then see if add square terms and interactions. mean center variables))
+Now that we see the variation inflation factors of each of the variables, we can 
+reduce the multicollinearity by eliminating data points where one has a similar 
+VIF to another. Thus we removed solar radiation and dew point, due to its 
+multicollineaity with average air temperature and ETo respectively.
 
 ```{r}
 #removed variables with high multicollinearity: solrad, dewpoint
@@ -240,6 +298,7 @@ main_fire_model <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avga
                   family = "binomial")
 tidy(main_fire_model)
 ```
+
 ```{r}
 vif(main_fire_model)
 ```
@@ -247,11 +306,14 @@ vif(main_fire_model)
 
 ((drop-in deviance to see what variables are significant))
 ((ROC curve to find threshold for prediciton "final model"))
+
 ```{r}
 new_fire_model <- step(main_fire_model, direction = "backward")
 tidy(new_fire_model, conf.int = TRUE)
 ```
-((This model only has three predictors, so we transformed some variables to see if that would give further insight. quadratic trans formation for wind speed and humidity, by looking at empirical log plot and observing shape))
+This model only has three predictors, so we transformed some variables to see if 
+that would give further insight. quadratic trans formation for wind speed and 
+humidity, by looking at empirical log plot and observing shape
 
 ```{r}
 glance(new_fire_model)%>%
@@ -286,15 +348,29 @@ interaction_fire_model <- glm(Target ~ ETo + avgsoiltemp * avgairtemp + avgvappr
                   family = "binomial")
 tidy(interaction_fire_model)
 ```
+
 ```{r}
 anova(main_fire_model, interaction_fire_model, test = "Chisq") %>%
   tidy()
 ```
-High p-value, so the data provide insufficient evidence to conclude the interaction
-terms are statistically significant. 
+Due to a high p-value, the data provided is insufficient to provide evidence to 
+conclude that the interaction terms are statistically significant. 
 
-After all these analyses/tests, our ultimate best model is new_fire_model (main
-effect model and backwards selection)
+After all these analyses/tests, our ultimate best model is new_fire_model.
+
+Since new_fire_model appears to be our strongest model, that means that ETO, 
+average air temperature and average soil temperature are the most significant 
+environmental predictors of forest fires in California. While this might mean 
+that monitoring these three will provide a reduction strategy to fires, it creates 
+some ethical questions. ETO is ethylene oxygen is a flammable colorless gas, that 
+can not be simply removed from the atmosphere without introducing another agent. 
+Furthermore, managing average temperature also provides a number of practical 
+issues, as does managing soil temperature. Thus, is it too late to be able to do 
+anything effectively to prevent or can fire fighting measures only be reactive 
+from this point forward.
+
+
+
 
 
 ------------ notes -------------------------------------------------------------
