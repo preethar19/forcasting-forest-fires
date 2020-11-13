@@ -296,7 +296,8 @@ multicollineaity with average air temperature and ETo respectively.
 #removed variables with high multicollinearity: solrad, dewpoint
 main_fire_model <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avgairtemp, data = newestfire, 
                   family = "binomial")
-tidy(main_fire_model)
+tidy(main_fire_model) %>%
+  kable(digits = 3)
 ```
 
 ```{r}
@@ -309,7 +310,8 @@ vif(main_fire_model)
 
 ```{r}
 new_fire_model <- step(main_fire_model, direction = "backward")
-tidy(new_fire_model, conf.int = TRUE)
+tidy(new_fire_model, conf.int = TRUE) %>%
+  kable(digts = 3)
 ```
 This model only has three predictors, so we transformed some variables to see if 
 that would give further insight. quadratic trans formation for wind speed and 
@@ -317,7 +319,8 @@ humidity, by looking at empirical log plot and observing shape
 
 ```{r}
 glance(new_fire_model)%>%
-  select(AIC, BIC)
+  select(AIC, BIC) %>%
+  kable(digits = 3)
 ```
 
 ((AIC, BIC, Adj R to determine ))
@@ -327,16 +330,19 @@ glance(new_fire_model)%>%
 #main model, with quadratic transformation on avgwindspeed and avgrelhum
 fire_model2 <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), data = newestfire, 
                   family = "binomial")
-tidy(fire_model2)
+tidy(fire_model2) %>%
+  kable(digits = 3)
 ```
 
 ```{r}
 fire_model3 <- step(fire_model2, direction = "backward")
-tidy(fire_model3, conf.int = TRUE)
+tidy(fire_model3, conf.int = TRUE) %>%
+  kable(digits = 3)
 ```
 
 ```{r}
-glance(fire_model3)
+glance(fire_model3) %>%
+  kable(digits = 3)
 ```
 
 With quadratic transformed variables, AIC has marginal improvement, but BIC is
@@ -346,12 +352,14 @@ transformation of variables.
 ```{r}
 interaction_fire_model <- glm(Target ~ ETo + avgsoiltemp * avgairtemp + avgvappress + avgwindspeed * windrun + avgrelhum, data = newestfire, 
                   family = "binomial")
-tidy(interaction_fire_model)
+tidy(interaction_fire_model) %>%
+  kable(digits = 3)
 ```
 
 ```{r}
 anova(main_fire_model, interaction_fire_model, test = "Chisq") %>%
-  tidy()
+  tidy() %>%
+  kable(digits = 3)
 ```
 Due to a high p-value, the data provided is insufficient to provide evidence to 
 conclude that the interaction terms are statistically significant. 
