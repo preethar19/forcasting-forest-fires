@@ -279,7 +279,8 @@ that do not satisfy the conditions. Then we will use backward selection to reduc
 the data.
 
 ```{r}
-fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + dewpoint + avgairtemp, data = newestfire, 
+fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
+                    dewpoint + avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(fire_model)
 ```
@@ -294,7 +295,8 @@ multicollineaity with average air temperature and ETo respectively.
 
 ```{r}
 #removed variables with high multicollinearity: solrad, dewpoint
-main_fire_model <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avgairtemp, data = newestfire, 
+main_fire_model <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + 
+                         avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(main_fire_model) %>%
   kable(digits = 3)
@@ -313,9 +315,7 @@ new_fire_model <- step(main_fire_model, direction = "backward")
 tidy(new_fire_model, conf.int = TRUE) %>%
   kable(digts = 3)
 ```
-This model only has three predictors, so we transformed some variables to see if 
-that would give further insight. quadratic trans formation for wind speed and 
-humidity, by looking at empirical log plot and observing shape
+
 
 ```{r}
 glance(new_fire_model)%>%
@@ -323,16 +323,21 @@ glance(new_fire_model)%>%
   kable(digits = 3)
 ```
 
-((AIC, BIC, Adj R to determine ))
-
+Looking at the shapes of the empirical logit plots, average wind speed and 
+average relative humidity have slightly parabolic distributions. So, we added
+quadratic transformations of variables avgwindspeed and avgrelhum as predictors
+and fit a new model. 
 
 ```{r}
 #main model, with quadratic transformation on avgwindspeed and avgrelhum
-fire_model2 <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), data = newestfire, 
+fire_model2 <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + 
+                     avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), 
+                   data = newestfire, 
                   family = "binomial")
 tidy(fire_model2) %>%
   kable(digits = 3)
 ```
+
 
 ```{r}
 fire_model3 <- step(fire_model2, direction = "backward")
@@ -345,12 +350,25 @@ glance(fire_model3) %>%
   kable(digits = 3)
 ```
 
-With quadratic transformed variables, AIC has marginal improvement, but BIC is
-larger. So, it is optimal to stick with the model without quadratic 
-transformation of variables.
+Adding the quadratic transformed variables, AIC has marginal improvement, but 
+BIC is larger. So, we will not add the quadratic transformed variables in our
+final model.  
+
+Next, we explored potentially meaningful interaction terms. We ultimately chose 
+to test the only interaction term which seemed meaningful: ETo*avgwindspeed. We 
+inferred that large amounts of ETo in the air and high wind speed would 
+significantly increase the predicted probability of a forest fire because a lot 
+of fast-moving wind might spread ETo, a highly flammable chemical, more quickly 
+and over a larger area. 
+
+To determine if this interaction term is statistically significant, we added it
+to the main_model with the main effects of all the initial predictor variables 
+and then conducted a drop-in-deviance test between the two models. 
 
 ```{r}
-interaction_fire_model <- glm(Target ~ ETo + avgsoiltemp * avgairtemp + avgvappress + avgwindspeed * windrun + avgrelhum, data = newestfire, 
+interaction_fire_model <- glm(Target ~ ETo*avgwindspeed + avgsoiltemp + 
+                                avgairtemp + avgvappress + windrun + 
+                                avgrelhum, data = newestfire, 
                   family = "binomial")
 tidy(interaction_fire_model) %>%
   kable(digits = 3)
@@ -361,10 +379,18 @@ anova(main_fire_model, interaction_fire_model, test = "Chisq") %>%
   tidy() %>%
   kable(digits = 3)
 ```
-Due to a high p-value, the data provided is insufficient to provide evidence to 
-conclude that the interaction terms are statistically significant. 
+The p-value of the drop-in-deviance test is slightly higher than the 
+conventional alpha level of 0.05, which means the data provide insufficient to 
+suggest that the interaction term is statistically significant. So, we will not
+include the interaction term in our final model.
 
 After all these analyses/tests, our ultimate best model is new_fire_model.
+
+```{r}
+tidy(new_fire_model) %>%
+  kable(digits = 3)
+```
+$\hat{Target}  = -18.365 -26.276ETo + 0.169avgsoiltemp + 0.128avgairtemp$
 
 Since new_fire_model appears to be our strongest model, that means that ETO, 
 average air temperature and average soil temperature are the most significant 
@@ -377,7 +403,7 @@ issues, as does managing soil temperature. Thus, is it too late to be able to do
 anything effectively to prevent or can fire fighting measures only be reactive 
 from this point forward.
 
-
+### Appendix
 
 
 
