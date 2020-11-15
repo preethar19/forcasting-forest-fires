@@ -62,6 +62,8 @@ condition feature.” This user’s data contains a mixture of environmental and
 geospatial data to understand the size and the scope of the forest fires, as well 
 as where the fires seem to be most frequent.
 
+### Exploratory Data Analysis
+
 ```{r}
 newfire <- fire %>% 
   mutate(ETo = `ETo (in)`,
@@ -80,11 +82,11 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
-However, due to the size and scope of our data set, we decided to adjust 
+Due to the size and scope of our data set, we decided to adjust 
 accordingly. Each of the stations in our data contains data between 2018 and 
-summer 2020. To correct for this, we will be randomly selecting a day from each 
-of the sections within this range, and focusing more so on what each station 
-reported from its respective day. This will give us 153 observations instead of 
+summer 2020. To correct for this, we randomly selected a day from each 
+of the sections within this range and focused more so on what each station 
+reported from its respective day. This gave us 153 observations instead of 
 128,126. We decided that trimming it down would not only reduce the data, but 
 also reduce the noise. 
 
