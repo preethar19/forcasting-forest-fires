@@ -117,9 +117,8 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
-Due to the size and scope of our data set, we decided to adjust 
-accordingly. Each of the stations in our data contains data between 2018 and 
-summer 2020. To correct for this, we randomly selected a day from each 
+Each of the stations in our data contains data between 2018 and 
+summer 2020. To account for this, we randomly selected a day from each 
 of the sections within this range and focused more so on what each station 
 reported from its respective day. This gave us 153 observations instead of 
 128,126. We decided that trimming it down would not only reduce the data, but 
@@ -251,7 +250,7 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
 
 (p1 + p2 + p3)/(p4 + p5) + (p6 + p7)/(p8 + p9 + p10) + (p11 + p12) + (p13 + p14)
 ```
-In general it appears as thought the data points tend to follow a normal 
+In general it appears as though the data points tend to follow a normal 
 distribution.  However, not all normal distributions are made equal. Maximum 
 relative humidity appears to be left skewed, while precipitation appears to be 
 right skewed. While it appears that some have multiple peaks and unique spreads 
@@ -259,13 +258,13 @@ and distributions this is likely due to limited data points.
 
 ### Methodology
 
-To reduce the multicollinearity, we decided to focus on only 
+To reduce multicollinearity, we decided to focus on only 
 specific variables. For example, the dataset included the average, minimum and 
 maximum for a number of variables. We determined that average was likely most 
 relevant to the conditions recorded by each station throughout the day.
 
-Since we are trying to predict with a binary response variable, we will use a 
-logistic regression. However, to be able to use a logistic regression we need
+Since we are trying to predict with a binary response variable, we will use  
+logistic regression. However, to be able to use logistic regression we need
 to check the conditions, and ensure that the data satisfies linearity, randomness
 and independence.
 
@@ -302,31 +301,38 @@ relative humidity do not follow a linear relationship. Furthermore, linearity is
 only satisfied for precipitation when there are only 2 groups. This means that a
 linear model might not be an appropriate estimation for precipitation.
 
-A lot of the data in the dataset is conditional instead of random. The conditions 
+#maybe move this to EDA where we actually do this process
+Much of the data in the dataset is conditional instead of random; the conditions 
 recorded by one station will likely be similar to those in a nearby station and 
 similar to the recordings the day before. To correct for that, we took a random 
 sample of the days in our data set. This also supports independence. Our cleaning 
 of the data to include a random sample of days and stations.
 
-Now that we have cleaned the data and satisfied the conditions of logistic 
-regression, we began to build prediction models, and eliminated the variables 
-that do not satisfy the conditions. Then we will use backward selection to reduce 
-the data.
+We then began to construct prediction models. We first started with a main
+effects model containing all possible predictors.
 
 ```{r}
 fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
                     dewpoint + avgairtemp, data = newestfire, 
                   family = "binomial")
-tidy(fire_model)
+tidy(fire_model) %>%
+  kable(digits = 3)
 ```
 
+Because the only significant term in the model is avgsoiltemp (the only term 
+with an associated p.value of less than 0.05), we suspected multicollinearity.
+We used vif to further investigate this idea.
+
 ```{r}
-vif(fire_model)
+vif(fire_model) %>%
+  kable(digits = 3)
 ```
 Now that we see the variation inflation factors of each of the variables, we can 
 reduce the multicollinearity by eliminating data points where one has a similar 
 VIF to another. Thus we removed solar radiation and dew point, due to its 
-multicollinearity with average air temperature and ETo respectively.
+multicollinearity with average air temperature and ETo respectively. We then 
+constructed a new model (main_fire_model) without the variables with high 
+multicollinarity.
 
 ```{r}
 #removed variables with high multicollinearity: solrad, dewpoint
@@ -338,12 +344,15 @@ tidy(main_fire_model) %>%
 ```
 
 ```{r}
-vif(main_fire_model)
+vif(main_fire_model) %>%
+  kable(digits = 3)
 ```
 
+Because these values are 1) dissimilar from each other or 2) generally small, 
+we can conclude that we have removed highly correlated variables from analysis.
 
-((drop-in deviance to see what variables are significant))
-((ROC curve to find threshold for prediction "final model"))
+Next, using backwards selection from main_fire_model, we constructed 
+new_fire_model.
 
 ```{r}
 new_fire_model <- step(main_fire_model, direction = "backward")
@@ -351,12 +360,16 @@ tidy(new_fire_model, conf.int = TRUE) %>%
   kable(digts = 3)
 ```
 
-
 ```{r}
 glance(new_fire_model)%>%
   select(AIC, BIC) %>%
   kable(digits = 3)
 ```
+
+**write out new_fire_model here**
+
+We then decided to try out various variable transformations to potentially
+bolster the predictive power of our model.
 
 Looking at the shapes of the empirical logit plots, average wind speed and 
 average relative humidity have slightly parabolic distributions. So, we added
@@ -372,7 +385,6 @@ fire_model2 <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun +
 tidy(fire_model2) %>%
   kable(digits = 3)
 ```
-
 
 ```{r}
 fire_model3 <- step(fire_model2, direction = "backward")
@@ -422,6 +434,7 @@ we will not include the interaction term in our final model.
 
 After all these analyses/tests, our ultimate best model is new_fire_model.
 
+**do we have to show it again? or is just writing it out good enough?**
 ```{r}
 tidy(new_fire_model) %>%
   kable(digits = 3)
@@ -430,8 +443,6 @@ tidy(new_fire_model) %>%
 $$\hat{Target}  = -18.365 -26.276ETo + 0.169avgsoiltemp + 0.128avgairtemp$$
 
 ### Conclusion
-
-#This section is a conclusion and discussion. This will require a summary of what you have learned about your research question along with statistical arguments supporting your conclusions. Also, critique your own methods and provide suggestions for improving your analysis. Issues pertaining to the reliability and validity of your data and appropriateness of the statistical analysis should also be discussed here. Includ 1 - 2 paragraphs on what you would do differently if you were able to start over with the project or what you would do next if you were going to continue work on the project should also be included.
 
 Since new_fire_model appears to be our strongest model, that means that ETo, 
 average air temperature and average soil temperature are the most significant 
