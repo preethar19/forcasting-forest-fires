@@ -27,6 +27,11 @@ library(rms)
 fire <- readr::read_csv('data/all_conditions.csv')
 ```
 
+```{r}
+fire %>%
+  mutate(Target = factor(Target))
+```
+
 ### Introduction
 
 Climate change represents an existential threat to humanity. Its effects have 
@@ -51,6 +56,8 @@ insights into how to manage its consequences and effects will help us plan for
 both the short term and long term future, at least until policy and research 
 catch up to the severity of the issue.
 
+**CLEARLY STATE RESEARCH QUESTION HERE**
+
 The data we will be using was scraped from CIMIS (California Irrigation 
 Management Information System) weather stations by github user czaloumi using a 
 selenium chromedriver. The dataset was combined with Wikipedia tables listing 
@@ -61,8 +68,6 @@ XGBoost Classifier to accurately predict probability for fire given environmenta
 condition feature.” This user’s data contains a mixture of environmental and 
 geospatial data to understand the size and the scope of the forest fires, as well 
 as where the fires seem to be most frequent.
-
-**CLEARLY STATE RESEARCH QUESTION HERE**
 
 ### Our Data
 
@@ -137,6 +142,7 @@ substantial variation, however when comparing station to station over different
 days, we are able to see different variables from all times of the year.
 However, there was still some missing data, so our total number of observations 
 has been further reduced to 143, from stations all across the state of California.
+**explain this more, maybe take stuff from her slides on missing data?**
 
 ```{r}
 newestfire <- newestfire %>% 
@@ -250,6 +256,7 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
 
 (p1 + p2 + p3)/(p4 + p5) + (p6 + p7)/(p8 + p9 + p10) + (p11 + p12) + (p13 + p14)
 ```
+
 In general it appears as though the data points tend to follow a normal 
 distribution.  However, not all normal distributions are made equal. Maximum 
 relative humidity appears to be left skewed, while precipitation appears to be 
@@ -446,16 +453,52 @@ $$\hat{Target}  = -18.365 -26.276ETo + 0.169avgsoiltemp + 0.128avgairtemp$$
 
 Since new_fire_model appears to be our strongest model, that means that ETo, 
 average air temperature and average soil temperature are the most significant 
-environmental predictors of forest fires in California. While this might mean 
-that monitoring these three will provide a reduction strategy to fires, it creates 
-some ethical questions. ETo, ethylene oxygen, is a flammable colorless gas, that 
-can not be simply removed from the atmosphere without introducing another agent. 
-Furthermore, managing average temperature also provides a number of practical 
-issues, as does managing soil temperature. Thus, our model suggest that it is 
-likely too late to be able to do anything effectively to prevent or can fire 
-fighting measures only be reactive from this point forward.
+environmental predictors of forest fires in California. To test our model, we 
+first constructed an ROC curve to identify a prediction threshold.
+
+```{r}
+resp_aug <- augment(new_fire_model) %>%
+  mutate(Target = factor(Target)) %>% 
+  mutate(Target = fct_relevel(Target, c("1", "0")))
+```
+
+```{r}
+# calculate sensitivity and specificity at each threshold
+roc_curve_data <- resp_aug %>%
+  roc_curve(Target, .fitted) %>%
+  mutate(false_rate = 1 - specificity) 
+```
+```{r}
+autoplot(roc_curve_data)
+```
+From this ROC curve, we selected a prediction threshold of X, identified by 
+minimizing 1-specificity while maximizing sensitivity. Because there is greater
+risk in failing to predict a fire (type 2 error), we were less interested in the
+false positive rate as opposed to the sensitivity.
+
+```{r}
+roc_curve_data %>%
+  slice(1:5)
+roc_curve_data %>% 
+  filter(sensitivity > 0.74, sensitivity < 1, specificity < 0.8)
+```
+
+((ROC curve to identify prediction threshold))
+
+((try model on a test dataset?))
 
 ### Discussion
+
+Since new_fire_model appears to be our strongest model, that means that ETo, 
+average air temperature and average soil temperature are the most significant 
+environmental predictors of forest fires in California. While this might mean 
+that monitoring these three will provide a reduction strategy to fires, it 
+creates some ethical questions. ETo, ethylene oxygen, is a flammable colorless 
+gas that cannot be simply removed from the atmosphere without introducing 
+another agent. Furthermore, managing average temperature also provides a number 
+of practical issues, as does managing soil temperature. Thus, our model suggest 
+that it is likely too late to be able to do anything effectively to prevent or 
+can firefighting measures only be reactive from this point forward.
 
 The reliability and validity of our data certainly comes into question. As 
 previously stated, a single data point was randomly chosen from each station 
