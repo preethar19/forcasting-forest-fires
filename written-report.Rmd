@@ -229,12 +229,12 @@ maximum for a number of variables. We determined that average was likely most
 relevant to the conditions recorded by each station throughout the day.
 
 Since we are trying to predict with a binary response variable, we will use a 
-logisitic regression. However, to be able to use a logisitic regression we need
-to check the conditions, and ensure that the data satsifies linearity, randomness
+logistic regression. However, to be able to use a logistic regression we need
+to check the conditions, and ensure that the data satisfies linearity, randomness
 and independence.
 
 
-To check linearity, we will make an empirical logisrtic regression plot for each 
+To check linearity, we will make an empirical logistic regression plot for each 
 of the predictor variables.
 
 ```{r fig.width = 7, fig.height = 3}
@@ -291,7 +291,7 @@ vif(fire_model)
 Now that we see the variation inflation factors of each of the variables, we can 
 reduce the multicollinearity by eliminating data points where one has a similar 
 VIF to another. Thus we removed solar radiation and dew point, due to its 
-multicollineaity with average air temperature and ETo respectively.
+multicollinearity with average air temperature and ETo respectively.
 
 ```{r}
 #removed variables with high multicollinearity: solrad, dewpoint
@@ -308,7 +308,7 @@ vif(main_fire_model)
 
 
 ((drop-in deviance to see what variables are significant))
-((ROC curve to find threshold for prediciton "final model"))
+((ROC curve to find threshold for prediction "final model"))
 
 ```{r}
 new_fire_model <- step(main_fire_model, direction = "backward")
@@ -417,10 +417,10 @@ variables we want to keep:
 - average humidity
 multicollinearity w min and max, we think humidity prob has some effect on fire (water in air???)
 - avg air temp 
-multicolinearity w min and max air temp
+multicollinearity w min and max air temp
 
 things to do after building model w everything:
-- log transform precipitaion??
+- log transform precipitation??
 it looks funny
 - sol radiation
 closely related to soil temperature (MAKE PLOT FOR THIS FIRST)
