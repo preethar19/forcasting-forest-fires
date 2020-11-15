@@ -62,6 +62,39 @@ condition feature.” This user’s data contains a mixture of environmental and
 geospatial data to understand the size and the scope of the forest fires, as well 
 as where the fires seem to be most frequent.
 
+**CLEARLY STATE RESEARCH QUESTION HERE**
+
+There are 128,126 observations in the data set. Each observation represents 
+information on the weather conditions at a given weather station on a specific 
+date.
+
+The response variable we will be investigating is Target, which corresponds to 
+fires on the respective observation date, in the observation region. The Target 
+variable is a binary indicator, with a value of 1 indicating there was a fire 
+and a value of 0 indicating there was not a fire.
+
+Our potential predictor variables are:
+
+**`ETo`** - description
+
+**`precip`** - description
+
+**`solrad`** - description
+
+**`avgvappress`** - description
+
+**`avgsoilterm`** -  description
+
+**`windrun`** - description
+
+**`avgwindspeed`** - description
+
+**`dewpoint`** - description
+
+**`avgrelhum`** - description
+
+**`avgairtemp`** - description
+
 ### Exploratory Data Analysis
 
 ```{r}
@@ -103,7 +136,6 @@ substantial variation, however when comparing station to station over different
 days, we are able to see different variables from all times of the year.
 However, there was still some missing data, so our total number of observations 
 has been further reduced to 143, from stations all across the state of California.
-
 
 ```{r}
 newestfire <- newestfire %>% 
@@ -234,7 +266,6 @@ Since we are trying to predict with a binary response variable, we will use a
 logistic regression. However, to be able to use a logistic regression we need
 to check the conditions, and ensure that the data satisfies linearity, randomness
 and independence.
-
 
 To check linearity, we will make an empirical logistic regression plot for each 
 of the predictor variables.
