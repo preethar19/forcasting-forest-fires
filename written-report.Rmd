@@ -64,6 +64,8 @@ as where the fires seem to be most frequent.
 
 **CLEARLY STATE RESEARCH QUESTION HERE**
 
+### Our Data
+
 There are 128,126 observations in the data set. Each observation represents 
 information on the weather conditions at a given weather station on a specific 
 date.
@@ -412,10 +414,11 @@ anova(main_fire_model, interaction_fire_model, test = "Chisq") %>%
   tidy() %>%
   kable(digits = 3)
 ```
+
 The p-value of the drop-in-deviance test is slightly higher than the 
-conventional alpha level of 0.05, which means the data provide insufficient to 
-suggest that the interaction term is statistically significant. So, we will not
-include the interaction term in our final model.
+conventional alpha level of 0.05, which means the data do not provide sufficient
+evidence to suggest that the interaction term is statistically significant. So, 
+we will not include the interaction term in our final model.
 
 After all these analyses/tests, our ultimate best model is new_fire_model.
 
@@ -423,18 +426,46 @@ After all these analyses/tests, our ultimate best model is new_fire_model.
 tidy(new_fire_model) %>%
   kable(digits = 3)
 ```
-$\hat{Target}  = -18.365 -26.276ETo + 0.169avgsoiltemp + 0.128avgairtemp$
 
-Since new_fire_model appears to be our strongest model, that means that ETO, 
+$$\hat{Target}  = -18.365 -26.276ETo + 0.169avgsoiltemp + 0.128avgairtemp$$
+
+### Conclusion
+
+#This section is a conclusion and discussion. This will require a summary of what you have learned about your research question along with statistical arguments supporting your conclusions. Also, critique your own methods and provide suggestions for improving your analysis. Issues pertaining to the reliability and validity of your data and appropriateness of the statistical analysis should also be discussed here. Includ 1 - 2 paragraphs on what you would do differently if you were able to start over with the project or what you would do next if you were going to continue work on the project should also be included.
+
+Since new_fire_model appears to be our strongest model, that means that ETo, 
 average air temperature and average soil temperature are the most significant 
 environmental predictors of forest fires in California. While this might mean 
 that monitoring these three will provide a reduction strategy to fires, it creates 
-some ethical questions. ETO is ethylene oxygen is a flammable colorless gas, that 
+some ethical questions. ETo, ethylene oxygen, is a flammable colorless gas, that 
 can not be simply removed from the atmosphere without introducing another agent. 
 Furthermore, managing average temperature also provides a number of practical 
-issues, as does managing soil temperature. Thus, is it too late to be able to do 
-anything effectively to prevent or can fire fighting measures only be reactive 
-from this point forward.
+issues, as does managing soil temperature. Thus, our model suggest that it is 
+likely too late to be able to do anything effectively to prevent or can fire 
+fighting measures only be reactive from this point forward.
+
+### Discussion
+
+The reliability and validity of our data certainly comes into question. As 
+previously stated, a single data point was randomly chosen from each station 
+(as the data spans multiple years and the goal was to reduce multicollinearity 
+as much as possible). However, this method is not foolproof. Stations that are 
+spatially close together and whose randomly selected dates are close together 
+are not screened for in our data selection process. With more time, this data 
+selection process would be further refined to ensure data points are as 
+independent as possible.
+
+Additionally, we only considered one potentially meaningful interaction term, 
+ETo*avgwindspeed, throughout our analysis. In an expanded version of this 
+project, we would potentially explore more interaction terms, as this single 
+term was ultimately left out of the model. 
+
+Though we considered both AIC and BIC throughout our analysis, we were partial 
+to BIC, favoring a parsimonious model. The result is our final model with only 
+three terms. With more time, we could construct 1) a model with AIC selection 
+criterion and 2) a model with BIC selection criterion and compare the two on a 
+new randomly selected set of data points to identify which has greater 
+prediction accuracy. 
 
 ### Appendix
 
