@@ -14,8 +14,6 @@ knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE)
 ```
 
-Your written report goes here! Before you submit, make sure your code chunks are turned off with `echo = FALSE` and there are no warnings or messages with `warning = FALSE` and `message = FALSE` 
-
 ```{r load-packages}
 library(tidyverse)
 library(broom)
@@ -30,7 +28,7 @@ library(rms)
 fire <- readr::read_csv('data/all_conditions.csv')
 ```
 
-```{r}
+```{r, include=FALSE}
 fire %>%
   mutate(Target = factor(Target))
 ```
@@ -193,7 +191,7 @@ p1 <- ggplot(data = newestfire, aes(x = ETo)) +
   labs(x = "ETo (in)",
        y = "Count",
        title = "Distribution of ETo (in)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p2 <- ggplot(data = newestfire, aes(x = precip)) +
   geom_histogram(stat = "count", fill = "orange") +
@@ -202,51 +200,51 @@ p2 <- ggplot(data = newestfire, aes(x = precip)) +
   labs(x = "Precip (in)",
        y = "Count",
        title = "Distribution of Precip (in)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p3 <- ggplot(data = newestfire, aes(x = solrad)) +
   geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Sol Rad (Ly/day)",
        y = "Count",
        title = "Distribution of Sol Rad (Ly/day)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p4 <- ggplot(data = newestfire, aes(x = avgsoiltemp)) +
-  geom_histogram(stat = "count", fill = "red") +
+  geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
        title = "Distribution of Avg Soil Temp (F)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p5 <- ggplot(data = newestfire, aes(x = windrun)) +
-  geom_histogram(stat = "count", fill = "orange")  +
+  geom_histogram(stat = "count", fill = "red")  +
   xlim(0,250) +
   ylim(0,1.5) +
   labs(x = "Wind Run (miles)",
        y = "Count",
        title = "Distribution of Wind Run (miles)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p6 <- ggplot(data = newestfire, aes(x = avgwindspeed)) +
   geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Avg Wind Speed (mph)",
        y = "Count",
        title = "Distribution of Avg Wind Speed (mph)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p7 <- ggplot(data = newestfire, aes(x = dewpoint)) +
-  geom_histogram(stat = "count", fill = "red") +
+  geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Dew Point (F)",
        y = "Count",
        title = "Distribution of Dew Point (F)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
   geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Avg Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Avg Relative Humidity (%)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 
 p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
@@ -254,9 +252,7 @@ p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
   labs(x = "Avg Vap Pres (mBars)",
        y = "Count",
        title = "Distribution of Avg Vap Pres (mBars)") +
-  theme_minimal()
-
-
+  theme_minimal(base_size = 8)
 
 p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
   geom_histogram(stat = "count", fill = "red") +
@@ -264,12 +260,16 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
   labs(x = "Avg Air Temp (F)",
        y = "Count",
        title = "Distribution of Avg Air Temp (F)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 (p1 + p2 + p3)/(p4 + p5) 
 
 (p6 + p7+ p14)/(p11 + p8)
 ```
+
+Some of the predictor variables in our dataset are not shown here as they were 
+not used for analysis. The plots for these variables can be found in Appendix A 
+along with an explanation for their elimination. 
 
 Precipitation and average wind speed appear to be right skewed, ETo is roughly 
 trimodal, average relative humidity is bimodal, and dew point is roughly left 
@@ -279,14 +279,9 @@ hypothesis made clear by the low counts shown on each graph.
 
 ### Methodology
 
-To reduce multicollinearity, we decided to focus on only 
-specific variables. For example, the dataset included the average, minimum and 
-maximum value for a number of variables. We determined that average was likely 
-the most relevant value for each condition recorded by each station throughout 
-the day.
-
-Since we are trying to predict the presence of a fire with a binary response 
-variable, target, we will use a logistic regression for our analysis. 
+We are trying to predict the presence of a fire with a binary response 
+variable, Target (which indicates the presence or non presence of a fire);
+therefore we will use a logistic regression for our analysis. 
 
 ################################################################################
 However, to be able to use logistic regression we need
@@ -523,21 +518,68 @@ model_aug %>%
   kable(digits = 3)
 ```
 The confusion matrix indicates that the model correctly predicts the presence
-or non presence of a fire in 135/143 cases or 94.41% of the time.
+or non presence of a fire in 135/143 cases or 94.41% of the time at a 
+threshold level of 0.193.
 
+To truly test our model, we randomly selected a new set of observations from 
+our original dataset and assessed the model's predictive power on the new 
+data points.
+
+```{r}
+set.seed(40)
+
+newestfire_test <- newfire %>% 
+  group_by(`Stn Id`) %>% 
+  sample_n(1, replace = TRUE)
+```
+```{r}
+newestfire_test <- newestfire_test %>% 
+  drop_na()
+```
+```{r}
+#main model, with quadratic transformation on dewpoint
+fire_model_test <- glm(Target ~ ETo + solrad + avgsoiltemp + windrun + 
+                    I(dewpoint^2) + avgairtemp + avgwindspeed, 
+                   data = newestfire_test, 
+                  family = "binomial")
+```
+```{r}
+resp_test <- augment(fire_model_test, type.predict = "response") %>%
+  mutate(Target = factor(Target)) %>% 
+  mutate(Target = fct_relevel(Target, c("1", "0")))
+```
+```{r}
+# calculate sensitivity and specificity at each threshold
+roc_curve_data_test <- resp_test %>%
+  roc_curve(Target, .fitted) %>%
+  mutate(false_rate = 1 - specificity) 
+```
+```{r}
+model_test <- resp_test %>% 
+  mutate(pred_resp = if_else(.fitted > 0.193, "fire", "no fire"))
+```
+```{r}
+model_test %>% 
+  count(Target, pred_resp) %>%
+  kable(digits = 3)
+```
+On the new, randomly selected test dataset, the confusion matrix indicates that 
+the model correctly predicts the presence or non presence of a fire in 131/142 
+cases or 92.25% at a threshold level of 0.193.
 
 ### Discussion
 
-Since new_fire_model appears to be our strongest model, that means that ETo, 
-average air temperature and average soil temperature are the most significant 
-environmental predictors of forest fires in California. While this might mean 
-that monitoring these three will provide a reduction strategy to fires, it 
-creates some ethical questions. ETo, ethylene oxygen, is a flammable colorless 
-gas that cannot be simply removed from the atmosphere without introducing 
-another agent. Furthermore, managing average temperature also provides a number 
-of practical issues, as does managing soil temperature. Thus, our model suggest 
-that it is likely too late to be able to do anything effectively to prevent or 
-can firefighting measures only be reactive from this point forward.
+Since fire_model3 appears to be our strongest model, that means that ETo, 
+solrad, avgsoiltemp, windrun, I(dewpoint^2), avgairtemp, avgwindspeed are the 
+most significant environmental predictors of forest fires in California. 
+While this might mean that monitoring these three will provide a reduction 
+strategy to fires, it creates some ethical questions. ETo, ethylene oxygen, is 
+a flammable colorless gas that cannot be simply removed from the atmosphere 
+without introducing another agent. Furthermore, managing average temperature 
+also provides a number of practical issues, as does managing soil temperature. 
+Thus, our model suggest that it is likely too late to be able to do anything 
+effectively to prevent or can firefighting measures only be reactive from this 
+point forward.
 
 The reliability and validity of our data certainly comes into question. As 
 previously stated, a single data point was randomly chosen from each station 
@@ -561,57 +603,43 @@ new randomly selected set of data points to identify which has greater
 prediction accuracy. 
 
 ### Appendix
+
+**FIGURE A**
 ```{r}
 p9 <- ggplot(data = newestfire, aes(x = minrelhum)) +
-  geom_histogram(stat = "count") +
+  geom_histogram(stat = "count", fill = "red") +
   labs(x = "Min Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Min Relative Humidity (%)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p10 <- ggplot(data = newestfire, aes(x = maxrelhum)) +
-  geom_histogram(stat = "count", fill = "black") +
+  geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Max Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Max Relative Humidity (%)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p12 <- ggplot(data = newestfire, aes(x = maxairtemp)) +
-  geom_histogram(stat = "count", fill = "blue") +
+  geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Max Air Temp (F)",
        y = "Count",
        title = "Distribution of Max Air Temp (F)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 
 p13 <- ggplot(data = newestfire, aes(x = minairtemp)) +
-  geom_histogram(stat = "count", fill = "lightblue") +
+  geom_histogram(stat = "count", fill = "red") +
   labs(x = "Min Air Temp (F)",
        y = "Count",
        title = "Distribution of Min Air Temp (F)") +
-  theme_minimal()
+  theme_minimal(base_size = 8)
 (p9 + p10) /(p12 + p13)
 ```
-
-
-
------------- notes -------------------------------------------------------------
-- picked variables that need transformation (rel humidity, sol rad, precip) 
-      - log transform?
-- build model, backward assumption
-
-
-variables we want to keep:
-- average humidity
-multicollinearity w min and max, we think humidity prob has some effect on fire (water in air???)
-- avg air temp 
-multicollinearity w min and max air temp
-
-things to do after building model w everything:
-- log transform precipitation??
-it looks funny
-- sol radiation
-closely related to soil temperature (MAKE PLOT FOR THIS FIRST)
-- dew point//temperature//humidity
-- wind run//wind speed
+To reduce multicollinearity, we decided to eliminate these variables from our
+analysis. For example, the dataset included the average, minimum and 
+maximum value for a number of variables, including relative humidity and air
+temperature. We determined that the daily averages for these variables were 
+likely the most relevant value for each condition recorded by each station with
+regards to predicting fires.
 
 
