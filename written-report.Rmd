@@ -59,7 +59,7 @@ insights into how to manage its consequences and effects will help us plan for
 both the short term and long term future, at least until policy and research 
 catch up to the severity of the issue.
 
-Thus the research question we want to answer is: what are the strongest 
+Thus, the research question we want to answer is: what are the strongest 
 environmental predictors of forest fires in California?
 
 The data we will be using was scraped from CIMIS (California Irrigation 
@@ -90,30 +90,30 @@ Our potential predictor variables are:
 present in the soil in each of the regions. This means that it is the amount of 
 water transferred to the land by means of plants.
 
-**`precip`** - The precip variables measure the long term monthly average amount 
+**`precip`** - The precip variable measurse the long term monthly average amount 
 of precpitation found in the each station's region.
 
-**`solrad`** - The solrad variables measure the average amount of solar 
+**`solrad`** - The solrad variable measures the average amount of solar 
 radiation found in the each station's region.
 
-**`avgvappress`** - The avgvappress variables measure the average amount of vapor 
+**`avgvappress`** - The avgvappress variable measures the average amount of vapor 
 pressure found in the each station's region.
 
-**`avgsoiltemp`** -  The avgsoiltemp variables measure the average soil 
+**`avgsoiltemp`** -  The avgsoiltemp variable measures the average soil 
 temperature found in the each station's region.
 
-**`windrun`** - The windrun variables measures the sum of wind speed over a month.
+**`windrun`** - The windrun variable measures the sum of wind speed over a month.
 
-**`avgwindspeed`** - The avgwindspeed variables measure the average wind speed 
+**`avgwindspeed`** - The avgwindspeed variable measures the average wind speed 
 found in the each station's region.
 
-**`dewpoint`** - The dewpoint variables measure the average temperature of the 
+**`dewpoint`** - The dewpoint variable measures the average temperature of the 
 dew on the grass in each station over a month long period.
 
-**`avgrelhum`** - The avgrelhum variables measure the average relative humidity 
+**`avgrelhum`** - The avgrelhum variable measures the average relative humidity 
 found in the each station's region.
 
-**`avgairtemp`** - The avgairtemp variables measure the monthly average 
+**`avgairtemp`** - The avgairtemp variable measures the monthly average 
 of the air temperature found in the each station's region.
 
 ### Exploratory Data Analysis
@@ -136,25 +136,30 @@ newfire <- fire %>%
          minairtemp = `Min Air Temp (F)`)
 ```
 
-Each of the stations in our data contains data between 2018 and 
-summer 2020. To account for this, we randomly selected a day from each 
-of the sections within this range and focused more so on what each station 
-reported from its respective day. This gave us 153 observations instead of 
-128,126. Using a random sample of the data is an effective strategy to handle 
-this data set for a myriad of reasons. Firstly, my reducing the data set to a 
-small training set, we are able to make a model that is a more realistic 
-approximation of the conditions that might cause a fire. This is a good approach 
-to this data because due to the vast number of data sets, and differing climates 
-across the state of California, a random sample will most likely allow us to 
-separate the signal from the noise. Secondly, taking a smaller, random sample of 
-the data allows us to ensure that randomness is satisfied for the logistic 
-regression. This is important because the data has to be randomly distributed 
-for a logistic regression model to be applicable. Finally, taking a random sample 
+As previously stated, the dataset contains observations of weather conditions 
+and indicates the presence of a fire on a specific date at a certain weather
+station in California. Each of the stations in our dataset has recorded 
+observations of these weather conditions between 2018 and summer 2020. 
+Because the conditions recorded by one station will likely be similar to those 
+in a nearby station and similar to the recordings the day before, we had to 
+simulate independence by filtering our data. 
+
+First, observations were grouped by station id number. Next, one day was 
+chosen at random from each of the stations. This gave us 153 observations 
+instead of the original dataset of 128,126 observations.
+
+By reducing the data set to a small training set, we are able to make a model 
+that is a more realistic approximation of the conditions that might cause a 
+fire, sans the correlation that comes with keeping all of the data. 
+Additionally, constructing a model with a random sample of the data allows us to
+test our final model on a new sample of data to assess its predictive power.
+What more, taking a smaller, random sample of the data allows us to ensure that 
+randomness is satisfied for our analysis. Finally, taking a random sample 
 would ensure that the data satisfies independence, because whether a fire is 
 reported or not is no longer conditional on surrounding stations, as each station 
 is from different days and from different times of the year. Thus, while the 
-entire dataset does not satisfy independence, a random sample would meet this 
-requirement.
+dataset in its entirety does not satisfy independence, our random sample 
+meets this criteria.
 
 ```{r}
 set.seed(19)
@@ -164,15 +169,14 @@ newestfire <- newfire %>%
   sample_n(1, replace = TRUE)
 ```
 
-From day-to-day in a station it is unlikely that there is 
-substantial variation, however when comparing station to station over different 
-days, we are able to see different variables from all times of the year.
-However, there was still some missing data, so our total number of observations 
-has been further reduced to 143, from stations all across the state of California.
-We decided to reduce further because the missing data was missing not at random.
-Since the data was not at random, it did not make sense to mean-impute the values
-for the missing observations. Thus by removing these entries, we can ensure that
-our model is an accurate reflection of our random sample.
+Even after reducing our dataset to 153 random observations, it was clear that
+there was still some stations with missing observations in some variable 
+categories. We decided to use only complete observations in the analysis, and 
+thus, the total number of observations was further reduced to 143.
+
+On surface, it did not appear that the observations with missingness differed 
+systematically from the complete observations; it is thus unlikely that our 
+resulting analysis is biased by the decision to remove the data.
 
 ```{r}
 newestfire <- newestfire %>% 
@@ -183,16 +187,16 @@ Our first step of our exploratory data analysis was to look at the shape of the
 distributions of each variable. This would give us a sense about which 
 transformations might be necessary.
 
-```{r fig.width = 15, fig.height = 15}
+```{r fig.width = 10, fig.height = 6}
 p1 <- ggplot(data = newestfire, aes(x = ETo)) +
-  geom_histogram(stat = "count", fill = "red", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "red") +
   labs(x = "ETo (in)",
        y = "Count",
        title = "Distribution of ETo (in)") +
   theme_minimal()
 
 p2 <- ggplot(data = newestfire, aes(x = precip)) +
-  geom_histogram(stat = "count", fill = "lightblue", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "orange") +
   xlim(0,0.5) +
   ylim(0,10) +
   labs(x = "Precip (in)",
@@ -201,42 +205,44 @@ p2 <- ggplot(data = newestfire, aes(x = precip)) +
   theme_minimal()
 
 p3 <- ggplot(data = newestfire, aes(x = solrad)) +
-  geom_histogram(stat = "count", fill = "orange", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Sol Rad (Ly/day)",
        y = "Count",
        title = "Distribution of Sol Rad (Ly/day)") +
   theme_minimal()
 
 p4 <- ggplot(data = newestfire, aes(x = avgsoiltemp)) +
-  geom_histogram(stat = "count", fill = "brown", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "red") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
        title = "Distribution of Avg Soil Temp (F)") +
   theme_minimal()
 
 p5 <- ggplot(data = newestfire, aes(x = windrun)) +
-  geom_histogram(stat = "count", fill = "green", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "orange")  +
+  xlim(0,250) +
+  ylim(0,1.5) +
   labs(x = "Wind Run (miles)",
        y = "Count",
        title = "Distribution of Wind Run (miles)") +
   theme_minimal()
 
 p6 <- ggplot(data = newestfire, aes(x = avgwindspeed)) +
-  geom_histogram(stat = "count", fill = "navyblue", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Avg Wind Speed (mph)",
        y = "Count",
        title = "Distribution of Avg Wind Speed (mph)") +
   theme_minimal()
 
 p7 <- ggplot(data = newestfire, aes(x = dewpoint)) +
-  geom_histogram(stat = "count", fill = "pink", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "red") +
   labs(x = "Dew Point (F)",
        y = "Count",
        title = "Distribution of Dew Point (F)") +
   theme_minimal()
 
 p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
-  geom_histogram(stat = "count", fill = "salmon", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "orange") +
   labs(x = "Avg Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Avg Relative Humidity (%)") +
@@ -244,7 +250,7 @@ p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
 
 
 p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
-  geom_histogram(stat = "count", fill = "purple", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "salmon") +
   labs(x = "Avg Vap Pres (mBars)",
        y = "Count",
        title = "Distribution of Avg Vap Pres (mBars)") +
@@ -253,30 +259,37 @@ p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
 
 
 p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
-  geom_histogram(stat = "count", fill = "hotpink", binwidth = 100) +
+  geom_histogram(stat = "count", fill = "red") +
+  ylim(0,3) +
   labs(x = "Avg Air Temp (F)",
        y = "Count",
        title = "Distribution of Avg Air Temp (F)") +
   theme_minimal()
 
-(p1 + p2 + p3)/(p4 + p5) + (p6 + p7+ p8)/(p11 + p14)
+(p1 + p2 + p3)/(p4 + p5) 
+
+(p6 + p7+ p14)/(p11 + p8)
 ```
 
-In general it appears as though the data points tend to follow a normal 
-distribution.  However, not all normal distributions are made equal. Maximum 
-relative humidity appears to be left skewed, while precipitation appears to be 
-right skewed. While it appears that some have multiple peaks and unique spreads 
-and distributions this is likely due to limited data points.
+Precipitation and average wind speed appear to be right skewed, ETo is roughly 
+trimodal, average relative humidity is bimodal, and dew point is roughly left 
+skewed. Across the board, the histograms are far from normal, the multiple peaks
+and unique spreads and distributions are likely due to limited data points, a
+hypothesis made clear by the low counts shown on each graph. 
 
 ### Methodology
 
 To reduce multicollinearity, we decided to focus on only 
 specific variables. For example, the dataset included the average, minimum and 
-maximum for a number of variables. We determined that average was likely most 
-relevant to the conditions recorded by each station throughout the day.
+maximum value for a number of variables. We determined that average was likely 
+the most relevant value for each condition recorded by each station throughout 
+the day.
 
-Since we are trying to predict with a binary response variable, we will use  
-logistic regression. However, to be able to use logistic regression we need
+Since we are trying to predict the presence of a fire with a binary response 
+variable, target, we will use a logistic regression for our analysis. 
+
+################################################################################
+However, to be able to use logistic regression we need
 to check the conditions, and ensure that the data satisfies linearity, randomness
 and independence.
 
@@ -308,48 +321,52 @@ emplogitplot1(Target ~ precip, data = newestfire,
                  ngroups = 2)
 
 ```
+
 After looking at these graphs, it is apparent that average wind speed, and average
 relative humidity do not follow a linear relationship. Furthermore, linearity is
 only satisfied for precipitation when there are only 2 groups. This means that a
 linear model might not be an appropriate estimation for precipitation.
 
 #maybe move this to EDA where we actually do this process
-Much of the data in the dataset is conditional instead of random; the conditions 
-recorded by one station will likely be similar to those in a nearby station and 
-similar to the recordings the day before. To correct for that, we took a random 
-sample of the days in our data set. This also supports independence. Our cleaning 
-of the data to include a random sample of days and stations.
+We took a random sample of the days in our data set. This also supports 
+independence. Our cleaning of the data to include a random sample of days and 
+stations.
+################################################################################
 
 We then began to construct prediction models. We first started with a main
 effects model containing all possible predictors.
 
 ```{r}
 fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
+                    avgwindspeed + avgrelhum + precip +
                     dewpoint + avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(fire_model) %>%
   kable(digits = 3)
 ```
 
-Because the only significant term in the model is avgsoiltemp (the only term 
-with an associated p.value of less than 0.05), we suspected multicollinearity.
-We used vif to further investigate this idea.
+Because the only significant term in the model is the term for average
+soil temperature (the only term with an associated p.value of less than 0.05), 
+we suspected multicollinearity. We used vif to further investigate this idea.
 
 ```{r}
 vif(fire_model) %>%
   kable(digits = 3)
 ```
-Now that we see the variation inflation factors of each of the variables, we can 
-reduce the multicollinearity by eliminating data points where one has a similar 
-VIF to another. Thus we removed solar radiation and dew point, due to its 
-multicollinearity with average air temperature and ETo respectively. We then 
-constructed a new model (main_fire_model) without the variables with high 
-multicollinarity.
+
+We removed the variable representing the sum of wind speed over the month 
+(windrun) due to its multicollinarity with average wind speed, as indicated 
+by the large and similar vif values for both. Average relative humidity and 
+dewpoint were removed as well due to multicollinarity with average vapor 
+pressure and average air temperature, respectively.
+We then constructed a new model (main_fire_model) without the aforementioned
+variable.
 
 ```{r}
-#removed variables with high multicollinearity: solrad, dewpoint
-main_fire_model <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + 
-                         avgairtemp, data = newestfire, 
+#removed variables with high multicollinearity: windrun, avgrelhum
+main_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + 
+                    avgwindspeed + precip + dewpoint + 
+                    avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(main_fire_model) %>%
   kable(digits = 3)
@@ -360,7 +377,7 @@ vif(main_fire_model) %>%
   kable(digits = 3)
 ```
 
-Because these values are 1) dissimilar from each other or 2) generally small, 
+Because the vif values are 1) dissimilar from each other or 2) generally small, 
 we can conclude that we have removed highly correlated variables from analysis.
 
 Next, using backwards selection from main_fire_model, we constructed 
@@ -380,18 +397,24 @@ glance(new_fire_model)%>%
 
 **write out new_fire_model here**
 
-We then decided to try out various variable transformations to potentially
-bolster the predictive power of our model.
+We then decided to try out variable transformations to potentially
+bolster the predictive power of new_fire_model.
 
-Looking at the shapes of the empirical logit plots, average wind speed and 
-average relative humidity have slightly parabolic distributions. So, we added
-quadratic transformations of variables avgwindspeed and avgrelhum as predictors
-and fit a new model. 
+From a theoretical perspective, it is likely that our response variable, the 
+log likelihood of a fire, and one of our predictors, average temperature of the 
+dew on the grass (dewpoint), have a curvilinear relationship. A low value for 
+dewpoint could be recorded by a particular station as a result of firefighting 
+efforts while a high value for dewpoint could be the result of a fire.
+
+To test if this might be the case, we added a quadratic
+transformation of dewpoint as a predictor to our main effects 
+model and fit a new model. 
 
 ```{r}
 #main model, with quadratic transformation on avgwindspeed and avgrelhum
-fire_model2 <- glm(Target ~ ETo + avgvappress + avgsoiltemp + windrun + 
-                     avgairtemp + I(avgwindspeed^2)  + I(avgrelhum^2), 
+fire_model2 <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
+                    precip + I(dewpoint^2) + avgairtemp + avgwindspeed + 
+                     avgrelhum, 
                    data = newestfire, 
                   family = "binomial")
 tidy(fire_model2) %>%
@@ -406,65 +429,66 @@ tidy(fire_model3, conf.int = TRUE) %>%
 
 ```{r}
 glance(fire_model3) %>%
+  select(AIC, BIC) %>% 
   kable(digits = 3)
 ```
 
-Adding the quadratic transformed variables, AIC has marginal improvement, but 
-BIC is larger. So, we will not add the quadratic transformed variables in our
-final model.  
+Adding the quadratic transformed variable, AIC has a three point improvement
+over the main effects model, but BIC is larger. Because we have no preference 
+for a parsimonious model (what is indicated by a lower value of BIC), we 
+decided to keep the quadratic term for dewpoint. Thus, our current model is:
+
+$$\hat{Target}  = -6.727 + 157.331ETo + -0.070solrad + 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) + -0.374avgairtemp -127.386avgwindspeed$$
 
 Next, we explored potentially meaningful interaction terms. We ultimately chose 
 to test the only interaction term which seemed meaningful: ETo*avgwindspeed. We 
-inferred that large amounts of ETo in the soil and high wind speed would 
-significantly increase the predicted probability of a forest fire because a lot 
+inferred that large amounts of water transferred to the land by means of plants 
+(ETo) and high wind speed would (jointly) significantly increase the log 
+likelihood of a forest fire because a lot 
 of fast-moving wind might spread the water and thus make it harder for a fire to 
-develop in the area that the water was spread, but possibly easier for a fire to 
-begin in a region with less plamt based transpiration.
-
+develop in the area, and, on the other end of the spectrum, easier for a fire to 
+begin in a region with less plant based transpiration.
 
 To determine if this interaction term is statistically significant, we added it
-to the main_model with the main effects of all the initial predictor variables 
-and then conducted a drop-in-deviance test between the two models. 
+to the model with the quadratic dewpoint term (shown above) and conducted a 
+drop-in-deviance test between the model with and without the interaction term. 
 
 ```{r}
-interaction_fire_model <- glm(Target ~ ETo*avgwindspeed + avgsoiltemp + 
-                                avgairtemp + avgvappress + windrun + 
-                                avgrelhum, data = newestfire, 
+interaction_fire_model <- glm(Target ~ ETo*avgwindspeed + solrad + avgsoiltemp + windrun + I(dewpoint^2) + 
+                                avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(interaction_fire_model) %>%
   kable(digits = 3)
 ```
 
 ```{r}
-anova(main_fire_model, interaction_fire_model, test = "Chisq") %>%
+anova(fire_model3, interaction_fire_model, test = "Chisq") %>%
   tidy() %>%
   kable(digits = 3)
 ```
 
-The p-value of the drop-in-deviance test is slightly higher than the 
-conventional alpha level of 0.05, which means the data do not provide sufficient
+The p-value of the drop-in-deviance test is 0.761, much greater than our 
+alpha level of 0.05, which suggests that the data do not provide sufficient
 evidence to suggest that the interaction term is statistically significant. So, 
 we will not include the interaction term in our final model.
 
-After all these analyses/tests, our ultimate best model is new_fire_model.
+After all these analyses/tests, our ultimate best model is:
 
 **do we have to show it again? or is just writing it out good enough?**
 ```{r}
-tidy(new_fire_model) %>%
+tidy(fire_model3) %>%
   kable(digits = 3)
 ```
 
-$$\hat{Target}  = -18.365 -26.276ETo + 0.169avgsoiltemp + 0.128avgairtemp$$
+$$\hat{Target}  = -6.727 + 157.331(ETo) -0.070(solrad) + 0.434(avgsoiltemp) + 5.255(windrun) + 0.002(dewpoint^2) + -0.374(avgairtemp) -127.386(avgwindspeed)$$
 
 ### Conclusion
 
-Since new_fire_model appears to be our strongest model, that means that ETo, 
-average air temperature and average soil temperature are the most significant 
-environmental predictors of forest fires in California. To test our model, we 
-first constructed an ROC curve to identify a prediction threshold.
+To test our model, we first constructed an ROC curve to identify a prediction 
+threshold.
 
 ```{r}
-resp_aug <- augment(new_fire_model) %>%
+resp_aug <- augment(fire_model3) %>%
   mutate(Target = factor(Target)) %>% 
   mutate(Target = fct_relevel(Target, c("1", "0")))
 ```
@@ -478,6 +502,7 @@ roc_curve_data <- resp_aug %>%
 ```{r}
 autoplot(roc_curve_data)
 ```
+
 From this ROC curve, we selected a prediction threshold of X, identified by 
 minimizing 1-specificity while maximizing sensitivity. Because there is greater
 risk in failing to predict a fire (type 2 error), we were less interested in the
