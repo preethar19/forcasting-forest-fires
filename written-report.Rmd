@@ -264,7 +264,7 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
 
 (p1 + p2 + p3)/(p4 + p5) 
 
-(p6 + p7+ p14)/(p11 + p8)
+(p11 + p8)/(p6 + p7+ p14)
 ```
 
 Some of the predictor variables in our dataset are not shown here as they were 
@@ -283,53 +283,9 @@ We are trying to predict the presence of a fire with a binary response
 variable, Target (which indicates the presence or non presence of a fire);
 therefore we will use a logistic regression for our analysis. 
 
-################################################################################
-However, to be able to use logistic regression we need
-to check the conditions, and ensure that the data satisfies linearity, randomness
-and independence.
-
-To check linearity, we will make an empirical logistic regression plot for each 
-of the predictor variables.
-
-```{r fig.width = 7, fig.height = 3}
-
-
-emplogitplot1(Target ~ ETo, data = newestfire, 
-                  ngroups = 10)
-emplogitplot1(Target ~ solrad, data = newestfire, 
-                  ngroups = 10)
-emplogitplot1(Target ~ avgvappress, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ avgsoiltemp, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ windrun, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ avgwindspeed, data = newestfire, 
-                  ngroups = 10)
-emplogitplot1(Target ~ dewpoint, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ avgrelhum, data = newestfire, 
-                  ngroups = 10)
-emplogitplot1(Target ~ avgairtemp, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ precip, data = newestfire, 
-                 ngroups = 2)
-
-```
-
-After looking at these graphs, it is apparent that average wind speed, and average
-relative humidity do not follow a linear relationship. Furthermore, linearity is
-only satisfied for precipitation when there are only 2 groups. This means that a
-linear model might not be an appropriate estimation for precipitation.
-
-#maybe move this to EDA where we actually do this process
-We took a random sample of the days in our data set. This also supports 
-independence. Our cleaning of the data to include a random sample of days and 
-stations.
-################################################################################
-
-We then began to construct prediction models. We first started with a main
-effects model containing all possible predictors.
+After identifying our regression method, we began to construct prediction 
+models. We began first with a main effects model containing all possible 
+predictors.
 
 ```{r}
 fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
@@ -478,6 +434,48 @@ $$\hat{Target}  = -6.727 + 157.331(ETo) -0.070(solrad) + 0.434(avgsoiltemp) + 5.
 
 ### Conclusion
 
+With a final model identified, logistic model conditions (linearity, randomness
+and independence) can be assessed.
+
+To check linearity, we calculated an empirical logistic regression plot for each 
+of the predictor variables. 
+
+```{r}
+par(mfrow = c(3,3))
+
+emplogitplot1(Target ~ ETo, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ solrad, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgsoiltemp, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ windrun, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgwindspeed, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ I(dewpoint^2), data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgairtemp, data = newestfire, 
+                  ngroups = 5)
+
+```
+
+Potential violations of linearity are apparent in the
+plots for solar radiation (solrad), (windrun), and average wind speed 
+(avgwindspeed). However, the violations are not egregious enough to suggest that 
+there is no linear relationship between the empirical logit and the predictor 
+variables.
+
+We checked randomness based on the context of the data and how the observations 
+were collected. The dataset itself does not satisfy this condition, as nearby 
+stations and observations on between nearby dates are subject to a lack of 
+randomness. That said, the way in which we filtered data (grouping by station id
+and randomly selecting an observation) serves to satisfy this condition as 
+well as the independence condition.
+
+With all logistic regression conditions satisfied by our final model, 
+we can go ahead with assessing its predictive power.
+
 To test our model, we first constructed an ROC curve to identify a prediction 
 threshold.
 
@@ -486,7 +484,6 @@ resp_aug <- augment(fire_model3, type.predict = "response") %>%
   mutate(Target = factor(Target)) %>% 
   mutate(Target = fct_relevel(Target, c("1", "0")))
 ```
-
 ```{r}
 # calculate sensitivity and specificity at each threshold
 roc_curve_data <- resp_aug %>%
@@ -572,6 +569,8 @@ cases or 92.25% at a threshold level of 0.193.
 Since fire_model3 appears to be our strongest model, that means that ETo, 
 solrad, avgsoiltemp, windrun, I(dewpoint^2), avgairtemp, avgwindspeed are the 
 most significant environmental predictors of forest fires in California. 
+
+**pls fix this narrative**
 While this might mean that monitoring these three will provide a reduction 
 strategy to fires, it creates some ethical questions. ETo, ethylene oxygen, is 
 a flammable colorless gas that cannot be simply removed from the atmosphere 
@@ -580,6 +579,7 @@ also provides a number of practical issues, as does managing soil temperature.
 Thus, our model suggest that it is likely too late to be able to do anything 
 effectively to prevent or can firefighting measures only be reactive from this 
 point forward.
+**end**
 
 The reliability and validity of our data certainly comes into question. As 
 previously stated, a single data point was randomly chosen from each station 
@@ -588,7 +588,17 @@ as much as possible). However, this method is not foolproof. Stations that are
 spatially close together and whose randomly selected dates are close together 
 are not screened for in our data selection process. With more time, this data 
 selection process would be further refined to ensure data points are as 
-independent as possible.
+independent and as possible.
+
+Looking at the confusion matrix, it is clear that the model is a stronger
+predictor of no fires than fires. Where there is no fire, the model is correct
+in 129/135 cases for an overall no fire prediction accuracy of 95.56%. On the
+other hand, when there IS a fire, the model predicts its presence in 6/8 cases
+for an overall fire prediction accuracy of 75%. The stakes are higher when
+there is the potential for a fire, so a prediction accuracy of 75% is 
+concerning, to say the least. With more time, the reason for this would be 
+further investigated, and the threshold for our final model potentially
+adjusted.
 
 Additionally, we only considered one potentially meaningful interaction term, 
 ETo*avgwindspeed, throughout our analysis. In an expanded version of this 
@@ -596,11 +606,10 @@ project, we would potentially explore more interaction terms, as this single
 term was ultimately left out of the model. 
 
 Though we considered both AIC and BIC throughout our analysis, we were partial 
-to BIC, favoring a parsimonious model. The result is our final model with only 
-three terms. With more time, we could construct 1) a model with AIC selection 
-criterion and 2) a model with BIC selection criterion and compare the two on a 
-new randomly selected set of data points to identify which has greater 
-prediction accuracy. 
+to AIC, with no preference for a parsimonious model. With more time, we could 
+construct 1) a model with AIC as our selection criterion and 2) a model with BIC
+selection criterion and compare the two on a new randomly selected set of data 
+points to identify which has greater prediction accuracy. 
 
 ### Appendix
 
