@@ -614,6 +614,7 @@ points to identify which has greater prediction accuracy.
 ### Appendix
 
 **FIGURE A**
+
 ```{r}
 p9 <- ggplot(data = newestfire, aes(x = minrelhum)) +
   geom_histogram(stat = "count", fill = "red") +
@@ -642,8 +643,10 @@ p13 <- ggplot(data = newestfire, aes(x = minairtemp)) +
        y = "Count",
        title = "Distribution of Min Air Temp (F)") +
   theme_minimal(base_size = 8)
+
 (p9 + p10) /(p12 + p13)
 ```
+
 To reduce multicollinearity, we decided to eliminate these variables from our
 analysis. For example, the dataset included the average, minimum and 
 maximum value for a number of variables, including relative humidity and air
