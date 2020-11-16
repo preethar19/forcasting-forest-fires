@@ -365,7 +365,7 @@ variable.
 ```{r}
 #removed variables with high multicollinearity: windrun, avgrelhum
 main_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + 
-                    avgwindspeed + precip + dewpoint + 
+                    avgwindspeed + precip + 
                     avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(main_fire_model) %>%
@@ -377,8 +377,9 @@ vif(main_fire_model) %>%
   kable(digits = 3)
 ```
 
-Because the vif values are 1) dissimilar from each other or 2) generally small, 
-we can conclude that we have removed highly correlated variables from analysis.
+Because the remaining vif values are 1) dissimilar from each other or 2) 
+generally small, we can conclude that we have removed highly correlated 
+variables from analysis.
 
 Next, using backwards selection from main_fire_model, we constructed 
 new_fire_model.
@@ -398,7 +399,7 @@ glance(new_fire_model)%>%
 **write out new_fire_model here**
 
 We then decided to try out variable transformations to potentially
-bolster the predictive power of new_fire_model.
+bolster the predictive power of our model.
 
 From a theoretical perspective, it is likely that our response variable, the 
 log likelihood of a fire, and one of our predictors, average temperature of the 
@@ -411,7 +412,7 @@ transformation of dewpoint as a predictor to our main effects
 model and fit a new model. 
 
 ```{r}
-#main model, with quadratic transformation on avgwindspeed and avgrelhum
+#main model, with quadratic transformation on dewpoint
 fire_model2 <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
                     precip + I(dewpoint^2) + avgairtemp + avgwindspeed + 
                      avgrelhum, 
@@ -434,7 +435,7 @@ glance(fire_model3) %>%
 ```
 
 Adding the quadratic transformed variable, AIC has a three point improvement
-over the main effects model, but BIC is larger. Because we have no preference 
+over new_fire_model, but BIC is larger. Because we have no preference 
 for a parsimonious model (what is indicated by a lower value of BIC), we 
 decided to keep the quadratic term for dewpoint. Thus, our current model is:
 
@@ -445,7 +446,7 @@ to test the only interaction term which seemed meaningful: ETo*avgwindspeed. We
 inferred that large amounts of water transferred to the land by means of plants 
 (ETo) and high wind speed would (jointly) significantly increase the log 
 likelihood of a forest fire because a lot 
-of fast-moving wind might spread the water and thus make it harder for a fire to 
+of fast-moving wind may spread the water and thus make it harder for a fire to 
 develop in the area, and, on the other end of the spectrum, easier for a fire to 
 begin in a region with less plant based transpiration.
 
@@ -469,12 +470,10 @@ anova(fire_model3, interaction_fire_model, test = "Chisq") %>%
 
 The p-value of the drop-in-deviance test is 0.761, much greater than our 
 alpha level of 0.05, which suggests that the data do not provide sufficient
-evidence to suggest that the interaction term is statistically significant. So, 
-we will not include the interaction term in our final model.
+evidence to suggest that the interaction term is statistically significant. 
+Thus, we will not include the interaction term in our final model.
 
-After all these analyses/tests, our ultimate best model is:
-
-**do we have to show it again? or is just writing it out good enough?**
+After all these analyses/tests, our final model is:
 ```{r}
 tidy(fire_model3) %>%
   kable(digits = 3)
@@ -488,7 +487,7 @@ To test our model, we first constructed an ROC curve to identify a prediction
 threshold.
 
 ```{r}
-resp_aug <- augment(fire_model3) %>%
+resp_aug <- augment(fire_model3, type.predict = "response") %>%
   mutate(Target = factor(Target)) %>% 
   mutate(Target = fct_relevel(Target, c("1", "0")))
 ```
@@ -503,21 +502,29 @@ roc_curve_data <- resp_aug %>%
 autoplot(roc_curve_data)
 ```
 
-From this ROC curve, we selected a prediction threshold of X, identified by 
+From this ROC curve, we selected a prediction threshold of 0.193, identified by 
 minimizing 1-specificity while maximizing sensitivity. Because there is greater
 risk in failing to predict a fire (type 2 error), we were less interested in the
-false positive rate as opposed to the sensitivity.
+false positive rate as opposed to high sensitivity.
 
 ```{r}
-roc_curve_data %>%
-  slice(1:5)
 roc_curve_data %>% 
-  filter(sensitivity > 0.74, sensitivity < 1, specificity < 0.8)
+  filter(sensitivity > 0.75, sensitivity < 1, specificity > 0.95) %>%
+  kable(digits = 3)
+```
+```{r}
+model_aug <- resp_aug %>% 
+  mutate(pred_resp = if_else(.fitted > 0.193, "fire", "no fire"))
 ```
 
-((ROC curve to identify prediction threshold))
+```{r}
+model_aug %>% 
+  count(Target, pred_resp) %>%
+  kable(digits = 3)
+```
+The confusion matrix indicates that the model correctly predicts the presence
+or non presence of a fire in 135/143 cases or 94.41% of the time.
 
-((try model on a test dataset?))
 
 ### Discussion
 
