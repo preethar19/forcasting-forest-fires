@@ -43,34 +43,35 @@ change will not manifest in a single event, rather in a series of natural
 disasters that will eventually escalate to a point where we no longer have the 
 resources to manage these crises. This is being seen already in California as 
 wildfires sweep the state, forcing people to relocate, causing issues with 
-access and use of electricity and causing an estimated $10 billion in damages
-(citation). Thus, in our project, we plan to determine what are the strongest 
-environmental predictors of forest fires by looking at data from California. 
+access and use of electricity, and causing an estimated $10 billion in damages
+(citation). Thus, in our project, we are trying to determine what are the 
+strongest environmental predictors of forest fires by looking at data from 
+California. 
 
 It is important to understand what these predictors are for multiple reasons. 
-Firstly, in the short run, we will be able to identify the conditions that cause 
-fires to escalate. Thus, we can similarly correct these conditions in the 
-long run to see if it is possible to mitigate the threat of these fires going 
-forward. If we know what predictors play a role in a fire, it can help authorities 
-better understand what days or seasons present a higher risk, and thus prepare 
-accordingly. While climate change will continue to affect our way of life, 
-insights into how to manage its immediate consequences and effects will help us 
-plan for both the short term and long term future, at least until policy and 
-research catch up to the severity of the issue.
+Firstly, in the short run, we will be able to identify the conditions that make 
+forest fires more likely. Thus, we can try to correct these conditions in the 
+long run and see if it is possible to mitigate the threat of forest fires in the
+future. If we know what predictors play a role in predicting fires, it can help 
+authorities better understand what days or seasons present a higher risk, and 
+thus prepare accordingly. While climate change will continue to affect our way 
+of life, insights into how to manage its immediate consequences and effects will 
+help us plan for both the short term and long term future, at least until policy 
+and research catch up to the severity of the issue.
 
 Thus, the research question we want to answer is: what are the strongest 
 environmental predictors of forest fires in California?
 
-The data we will be using was scraped from CIMIS (California Irrigation 
+The data we are using was scraped from CIMIS (California Irrigation 
 Management Information System) weather stations by github user czaloumi using a 
 selenium chromedriver. The dataset was combined with Wikipedia tables listing 
 California fires by county and city to create the Target column, which indicates 
 whether or not there was a fire on a particular day. Additionally, the curator 
 of the dataset adds that this dataset was “used in conjunction to building an 
-XGBoost Classifier to accurately predict probability for fire given environmental 
-condition feature.” This user’s data contains a mixture of environmental and 
-geospatial data to understand the size and the scope of the forest fires, as well 
-as where the fires seem to be most frequent.
+XGBoost Classifier to accurately predict probability for fire given 
+environmental condition feature.” This user’s data contains a mixture of 
+environmental and geospatial data to understand the size and the scope of the 
+forest fires, as well as where the fires seem to be most frequent.
 
 ### Our Data
 
@@ -78,7 +79,7 @@ There are 128,126 observations in the data set. Each observation represents
 information on the weather conditions at a given weather station on a specific 
 date.
 
-The response variable we will be investigating is Target, which corresponds to 
+The response variable we are investigating is Target, which corresponds to 
 fires on the respective observation date, in the observation region. The Target 
 variable is a binary indicator, with a value of 1 indicating there was a fire 
 and a value of 0 indicating there was not a fire.
@@ -89,14 +90,15 @@ Our potential predictor variables are:
 present in the soil in each of the regions. This means that it is the amount of 
 water transferred to the land by means of plants.
 
-**`precip`** - The precip variable measurse the monthly average amount of 
-precpitation found in the each station's region in the days prior to the recording.
+**`precip`** - The precip variable measures the monthly average amount of 
+precpitation found in the each station's region in the days prior to the 
+recording.
 
 **`solrad`** - The solrad variable measures the average amount of solar 
 radiation found in the each station's region in the prior days.
 
-**`avgvappress`** - The avgvappress variable measures the average amount of vapor 
-pressure found in the each station's region in the days leading up to the 
+**`avgvappress`** - The avgvappress variable measures the average amount of
+vapor pressure found in the each station's region in the days leading up to the 
 recorded day.
 
 **`avgsoiltemp`** -  The avgsoiltemp variable measures the average soil 
@@ -142,11 +144,11 @@ and indicates the presence of a fire on a specific date at a certain weather
 station in California. Each of the stations in our dataset has recorded 
 observations of these weather conditions between 2018 and summer 2020. 
 Because the conditions recorded by one station will likely be similar to those 
-in a nearby station and similar to the recordings the day before, we had to 
+in a nearby station and similar to the recordings the day before, we 
 simulate independence by filtering our data. 
 
-First, observations were grouped by station id number. Next, one day was 
-chosen at random from each of the stations. This gave us 153 observations 
+First, we group observations by station id number. Next, one day is
+chosen at random from each of the stations. This gives us 153 observations 
 instead of the original dataset of 128,126 observations.
 
 By reducing the data set to a small training set, we are able to make a model 
@@ -154,12 +156,12 @@ that is a more realistic approximation of the conditions that might cause a
 fire, sans the correlation that comes with keeping all of the data. 
 Additionally, constructing a model with a random sample of the data allows us to
 test our final model on a smaller sample of data to assess its predictive power.
-What more, taking a smaller, random sample of the data allows us to ensure that 
-randomness is satisfied for our analysis. 
+In addition, taking a smaller, random sample of the data allows us to ensure 
+that randomness is satisfied for our analysis. 
 
-Furthermore, taking a random sample would ensure that the data satisfies 
+Furthermore, taking a random sample ensures that the data satisfies 
 independence, because whether a fire is reported or not is no longer conditional
-on surrounding stations and surroudning environmental variables, since each 
+on surrounding stations and surrounding environmental variables, since each 
 station is from different days and from different times of the year. Thus, while 
 the dataset in its entirety does not satisfy independence, our random sample 
 meets this criteria.
@@ -172,22 +174,22 @@ newestfire <- newfire %>%
   sample_n(1, replace = TRUE)
 ```
 
-Even after reducing our dataset to 153 random observations, it was clear that
-there was still some stations with missing observations in some variable 
-categories. We decided to use only complete observations in the analysis, and 
-thus, the total number of observations was further reduced to 143.
+Even after reducing our dataset to 153 random observations, it is clear that
+there are still some stations with missing observations in some variable 
+categories. We have decided to use only complete observations in the analysis, 
+and thus, the total number of observations is further reduced to 143.
 
-On surface, it did not appear that the observations with missingness differed 
-systematically from the complete observations; it is thus unlikely that our 
-resulting analysis is biased by the decision to remove the data.
+Glimpsing the data, it does not appear that the observations with missingness 
+differ systematically from the complete observations; it is thus unlikely that 
+our resulting analysis is biased by the decision to remove the data.
 
 ```{r}
 newestfire <- newestfire %>% 
   drop_na()
 ```
 
-Our first step of our exploratory data analysis was to look at the shape of the
-distributions of each variable. This would give us a sense about which 
+Our first step of our exploratory data analysis is to look at the shape of the
+distributions of each variable. This gives us a sense of which 
 transformations might be necessary.
 
 ```{r fig.width = 10, fig.height = 6}
@@ -289,8 +291,8 @@ We are trying to predict the presence of a fire with a binary response
 variable, Target (which indicates the presence or non presence of a fire);
 therefore we will use a logistic regression for our analysis. 
 
-After identifying our regression method, we began to construct prediction 
-models. We began first with a main effects model containing all possible 
+After identifying our regression method, we begin to construct prediction 
+models. We begin first with a main effects model containing all possible 
 predictors.
 
 ```{r}
@@ -304,19 +306,19 @@ tidy(fire_model) %>%
 
 Because the only significant term in the model is the term for average
 soil temperature (the only term with an associated p.value of less than 0.05), 
-we suspected multicollinearity among variables. We used vif to further 
-investigate this idea.
+we suspect multicollinearity among variables. We use vif to further 
+investigate this issue.
 
 ```{r}
 vif(fire_model) %>%
   kable(digits = 3)
 ```
 
-We removed the variable representing the sum of wind speed over the month 
+We remove the variable representing the sum of wind speed over the month 
 (windrun) due to its multicollinarity with average wind speed, as indicated 
 by the large and similar vif values for both. Average relative humidity and 
-dewpoint were removed as well due to multicollinarity with average vapor 
-pressure and average air temperature, respectively.We then constructed a new 
+dewpoint are removed as well due to multicollinarity with average vapor 
+pressure and average air temperature, respectively.We then construct a new 
 model (main_fire_model) without the aforementioned variable.
 
 ```{r}
@@ -338,7 +340,7 @@ Because the remaining vif values are 1) dissimilar from each other or 2)
 generally small, we can conclude that we have removed highly correlated 
 variables from analysis.
 
-Next, using backwards selection from main_fire_model, we constructed 
+Next, using backwards selection from main_fire_model, we construct
 new_fire_model. This was done to remove unnecessary variables and thus improve 
 the model's predictive ability.
 
@@ -354,10 +356,10 @@ glance(new_fire_model)%>%
   kable(digits = 3)
 ```
 
-$$\hat{Target}  = -15.229 + -0.0118340 solrad + 0.2580629avgsoiltemp $$
+$$log-odds(\hat{Target})  = -15.229 - 0.0118340solrad + 0.2580629avgsoiltemp $$
 
-We then decided to try out variable transformations to potentially bolster the 
-predictive power of our model.
+We then try out variable transformations to potentially bolster the predictive 
+power of our model.
 
 From a theoretical perspective, it is likely that our response variable, the 
 log likelihood of a fire, and one of our predictors, average temperature of the 
@@ -365,7 +367,7 @@ dew on the grass (dewpoint), have a curvilinear relationship. A low value for
 dewpoint could be recorded by a particular station as a result of firefighting 
 efforts while a high value for dewpoint could be the result of a fire.
 
-To test if this might be the case, we tested a quadratic transformation of 
+To determine if this might be the case, we test a quadratic transformation of 
 dewpoint as a predictor to our main effects model and fit a new model. 
 
 ```{r}
@@ -394,21 +396,22 @@ glance(fire_model3) %>%
 Adding the quadratic transformed variable, AIC has a three point improvement
 over new_fire_model, but BIC is larger. Because we have no preference 
 for a parsimonious model (what is indicated by a lower value of BIC), we 
-decided to keep the quadratic term for dewpoint. Thus, our current model is:
+keep the quadratic term for dewpoint. Thus, our current model is:
 
-$$\hat{Target}  = -6.727 + 157.331ETo + -0.070solrad + 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) + -0.374avgairtemp -127.386avgwindspeed$$
+$$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad + 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp - 127.386avgwindspeed$$
 
-Next, we explored potentially meaningful interaction terms. We ultimately chose 
+Next, we explore potentially significant interaction terms. We ultimately choose 
 to test the only interaction term which seemed meaningful: ETo*avgwindspeed. We 
-inferred that large amounts of water transferred to the land by means of plants 
-(ETo) and high wind speed would (jointly) significantly increase the log 
-likelihood of a forest fire because a lot of fast-moving wind may spread the 
-water and thus make it harder for a fire to develop in the area, and, on the 
-other end of the spectrum, easier for a fire to begin in a region with less plant 
-based transpiration.
+infer that large amounts of water transferred to the land by means of plants 
+(ETo) and high wind speed together would significantly decrease the log 
+odds of a forest fire happening because a lot of fast-moving wind may spread the 
+water more and thus make it harder for a fire to develop in the area. On the 
+other end of the spectrum, the log odds of a forest fire happening probably
+increases in regions with less plant based transpiration and low average wind
+speed because there is much less spreading of moisture in the air.
 
-To determine if this interaction term is statistically significant, we added it
-to the model with the quadratic dewpoint term (shown above) and conducted a 
+To determine if this interaction term is statistically significant, we add it
+to the model with the quadratic dewpoint term (shown above) and conduct a 
 drop-in-deviance test between the model with and without the interaction term. 
 
 ```{r}
@@ -428,7 +431,7 @@ anova(fire_model3, interaction_fire_model, test = "Chisq") %>%
 The p-value of the drop-in-deviance test is 0.761, much greater than our 
 alpha level of 0.05, which suggests that the data do not provide sufficient
 evidence to suggest that the interaction term is statistically significant. 
-Thus, we will not include the interaction term in our final model.
+Thus, we do not include the interaction term in our final model.
 
 After all these analyses/tests, our final model is:
 ```{r}
@@ -436,14 +439,14 @@ tidy(fire_model3) %>%
   kable(digits = 3)
 ```
 
-$$log-odds(\hat{Target})  = -6.727 + 157.331(ETo) -0.070(solrad) + 0.434(avgsoiltemp) + 5.255(windrun) + 0.002(dewpoint^2) + -0.374(avgairtemp) -127.386(avgwindspeed)$$
+$$log-odds(\hat{Target})  = -6.727 + 157.331(ETo) - 0.070(solrad) + 0.434(avgsoiltemp) + 5.255(windrun) + 0.002(dewpoint^2) - 0.374(avgairtemp) - 127.386(avgwindspeed)$$
 
 ### Conclusion
 
 With a final model identified, logistic model conditions (linearity, randomness
 and independence) can be assessed.
 
-To check linearity, we calculated an empirical logistic regression plot for each 
+To check linearity, we calculate an empirical logistic regression plot for each 
 of the predictor variables. 
 
 ```{r}
@@ -472,9 +475,9 @@ plots for solar radiation (solrad), (windrun), and average wind speed
 there is no linear relationship between the empirical logit and the predictor 
 variables.
 
-We checked randomness based on the context of the data and how the observations 
+We check randomness based on the context of the data and how the observations 
 were collected. The dataset itself does not satisfy this condition, as nearby 
-stations and observations on between nearby dates are subject to a lack of 
+stations and observations on close dates are subject to a lack of 
 randomness. That said, the way in which we filtered data (grouping by station id
 and randomly selecting an observation) serves to satisfy this condition as 
 well as the independence condition.
@@ -482,7 +485,7 @@ well as the independence condition.
 With all logistic regression conditions satisfied by our final model, 
 we can go ahead with assessing its predictive power.
 
-To test our model, we first constructed an ROC curve to identify a prediction 
+To test our model, we first construct an ROC curve to identify a prediction 
 threshold.
 
 ```{r}
@@ -500,9 +503,9 @@ roc_curve_data <- resp_aug %>%
 autoplot(roc_curve_data)
 ```
 
-From this ROC curve, we selected a prediction threshold of 0.193, identified by 
+From this ROC curve, we select a prediction threshold of 0.193, identified by 
 minimizing 1-specificity while maximizing sensitivity. Because there is greater
-risk in failing to predict a fire (type 2 error), we were less interested in the
+risk in failing to predict a fire (type 2 error), we are less interested in the
 false positive rate as opposed to high sensitivity.
 
 ```{r}
@@ -524,8 +527,8 @@ The confusion matrix indicates that the model correctly predicts the presence
 or non presence of a fire in 135/143 cases or 94.41% of the time at a 
 threshold level of 0.193.
 
-To truly test our model, we randomly selected a new set of observations from 
-our original dataset and assessed the model's predictive power on the new 
+To truly test our model, we randomly select a new set of observations from 
+our original dataset and assess the model's predictive power on the new 
 data points.
 
 ```{r}
@@ -578,21 +581,22 @@ cases or 92.25% at a threshold level of 0.193.
 
 ### Discussion
 
-Since fire_model3 appears to be our strongest model, that means that ETo, 
-solrad, avgsoiltemp, windrun, I(dewpoint^2), avgairtemp, avgwindspeed are the 
-most significant environmental predictors of forest fires in California. 
+Based on our final model, ETo, solrad, avgsoiltemp, windrun, I(dewpoint^2), 
+avgairtemp, avgwindspeed are the most significant environmental predictors of 
+forest fires in California. 
 
 While this might mean that monitoring these three will provide a reduction 
 strategy to fires, it creates some difficult policy questions. Each of these
 respective variables are naturally occurring features of an area. Thus while we
-can identify the conditions, we likely can not do much to alter these conditions
+can identify the conditions, not much can be done to alter these conditions
 in the short run. Therefore, our findings can only help identify the conditions
 that make a fire likely, and give little insight into what we can do to stop a 
-forest fire. However, being able to identify these conditions can help the 
-proper authorities be made aware of the possibility that a fire is likely. 
-However, our model suggest that it is likely too late to be able to do anything 
-effectively to prevent or can firefighting measures only be reactive from this 
-point forward.
+forest fire. Being able to identify these conditions can help make the
+proper authorities aware of the possibility that a fire is likely. 
+However, even once they are aware of the conditions for forest fires as 
+suggested by our model, it is probably too late to be able to do anything 
+to effectively prevent the fire at that point, and firefighting measures 
+can only be reactive from there.
 
 The reliability and validity of our data certainly comes into question. As 
 previously stated, a single data point was randomly chosen from each station 
@@ -606,7 +610,7 @@ independent and as possible.
 Looking at the confusion matrix, it is clear that the model is a stronger
 predictor of no fires than fires. Where there is no fire, the model is correct
 in 129/135 cases for an overall no fire prediction accuracy of 95.56%. On the
-other hand, when there IS a fire, the model predicts its presence in 6/8 cases
+other hand, when there is a fire, the model predicts its presence in 6/8 cases
 for an overall fire prediction accuracy of 75%. The stakes are higher when
 there is the potential for a fire, so a prediction accuracy of 75% is 
 concerning, to say the least. With more time and more data, the reason for this 
