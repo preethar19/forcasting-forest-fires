@@ -194,14 +194,14 @@ transformations might be necessary.
 
 ```{r fig.width = 10, fig.height = 6}
 p1 <- ggplot(data = newestfire, aes(x = ETo)) +
-  geom_histogram(stat = "count", fill = "red") +
+  geom_histogram(fill = "red") +
   labs(x = "ETo (in)",
        y = "Count",
        title = "Distribution of ETo (in)") +
   theme_minimal(base_size = 8)
 
 p2 <- ggplot(data = newestfire, aes(x = precip)) +
-  geom_histogram(stat = "count", fill = "orange") +
+  geom_histogram(fill = "orange") +
   xlim(0,0.5) +
   ylim(0,10) +
   labs(x = "Precip (in)",
@@ -210,21 +210,21 @@ p2 <- ggplot(data = newestfire, aes(x = precip)) +
   theme_minimal(base_size = 8)
 
 p3 <- ggplot(data = newestfire, aes(x = solrad)) +
-  geom_histogram(stat = "count", fill = "salmon") +
+  geom_histogram(fill = "salmon") +
   labs(x = "Sol Rad (Ly/day)",
        y = "Count",
        title = "Distribution of Sol Rad (Ly/day)") +
   theme_minimal(base_size = 8)
 
 p4 <- ggplot(data = newestfire, aes(x = avgsoiltemp)) +
-  geom_histogram(stat = "count", fill = "orange") +
+  geom_histogram(fill = "orange") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
        title = "Distribution of Avg Soil Temp (F)") +
   theme_minimal(base_size = 8)
 
 p5 <- ggplot(data = newestfire, aes(x = windrun)) +
-  geom_histogram(stat = "count", fill = "red")  +
+  geom_histogram(fill = "red")  +
   xlim(0,250) +
   ylim(0,1.5) +
   labs(x = "Wind Run (miles)",
@@ -233,21 +233,21 @@ p5 <- ggplot(data = newestfire, aes(x = windrun)) +
   theme_minimal(base_size = 8)
 
 p6 <- ggplot(data = newestfire, aes(x = avgwindspeed)) +
-  geom_histogram(stat = "count", fill = "salmon") +
+  geom_histogram(fill = "salmon") +
   labs(x = "Avg Wind Speed (mph)",
        y = "Count",
        title = "Distribution of Avg Wind Speed (mph)") +
   theme_minimal(base_size = 8)
 
 p7 <- ggplot(data = newestfire, aes(x = dewpoint)) +
-  geom_histogram(stat = "count", fill = "orange") +
+  geom_histogram(fill = "orange") +
   labs(x = "Dew Point (F)",
        y = "Count",
        title = "Distribution of Dew Point (F)") +
   theme_minimal(base_size = 8)
 
 p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
-  geom_histogram(stat = "count", fill = "orange") +
+  geom_histogram(fill = "orange") +
   labs(x = "Avg Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Avg Relative Humidity (%)") +
@@ -255,14 +255,14 @@ p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
 
 
 p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
-  geom_histogram(stat = "count", fill = "salmon") +
+  geom_histogram(fill = "salmon") +
   labs(x = "Avg Vap Pres (mBars)",
        y = "Count",
        title = "Distribution of Avg Vap Pres (mBars)") +
   theme_minimal(base_size = 8)
 
 p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
-  geom_histogram(stat = "count", fill = "red") +
+  geom_histogram(fill = "red") +
   ylim(0,3) +
   labs(x = "Avg Air Temp (F)",
        y = "Count",
@@ -499,7 +499,7 @@ roc_curve_data <- resp_aug %>%
   roc_curve(Target, .fitted) %>%
   mutate(false_rate = 1 - specificity) 
 ```
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 autoplot(roc_curve_data)
 ```
 
@@ -510,7 +510,7 @@ false positive rate as opposed to high sensitivity.
 
 ```{r}
 roc_curve_data %>% 
-  filter(sensitivity > 0.75, sensitivity < 1, specificity > 0.95) %>%
+  filter(sensitivity > 0.75, sensitivity < 1, specificity > 0.955) %>%
   kable(digits = 3)
 ```
 ```{r}
@@ -585,12 +585,12 @@ Based on our final model, ETo, solrad, avgsoiltemp, windrun, I(dewpoint^2),
 avgairtemp, avgwindspeed are the most significant environmental predictors of 
 forest fires in California. 
 
-While this might mean that monitoring these three will provide a reduction 
-strategy to fires, it creates some difficult policy questions. Each of these
-respective variables are naturally occurring features of an area. Thus while we
-can identify the conditions, not much can be done to alter these conditions
+While this might mean that monitoring these seven will provide a reduction 
+strategy to fires, it raises some difficult policy questions. Each of these
+respective variables are naturally occurring meteorological features. While we
+can identify these conditions, not much can be done to alter these conditions
 in the short run. Therefore, our findings can only help identify the conditions
-that make a fire likely, and give little insight into what we can do to stop a 
+that make a fire likely, but give little insight into what we can do to stop a 
 forest fire. Being able to identify these conditions can help make the
 proper authorities aware of the possibility that a fire is likely. 
 However, even once they are aware of the conditions for forest fires as 
