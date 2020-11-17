@@ -389,6 +389,22 @@ dew on the grass (dewpoint), have a curvilinear relationship. A low value for
 dewpoint could be recorded by a particular station as a result of firefighting 
 efforts while a high value for dewpoint could be the result of a fire.
 
+**************************
+To see if this hypothesis is supported by our data, we graphed the relationship
+between the log odds of our response variable, Target, and dewpoint.
+
+```{r}
+fire_model_aug <- augment(fire_model)
+
+ggplot(data = fire_model_aug, aes(x = dewpoint, y = .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, color = "red") +
+  labs(x = "dewpoint", 
+       y = "Residual", 
+       title = "Residuals vs. dewpoint")
+```
+**************************
+
 To determine if this might be the case, we test a quadratic transformation of 
 dewpoint as a predictor to our main effects model and fit a new model. 
 
@@ -420,7 +436,9 @@ over new_fire_model, but BIC is larger. Because we have no preference
 for a parsimonious model (what is indicated by a lower value of BIC), we 
 keep the quadratic term for dewpoint. Thus, our current model is:
 
-$$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad + 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp - 127.386avgwindspeed$$
+$$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad$$
+$$+ 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp$$
+$$- 127.386avgwindspeed$$
 
 Next, we explore potentially significant interaction terms. We ultimately choose 
 to test the only interaction term which seemed meaningful: ETo*avgwindspeed. We 
@@ -437,7 +455,8 @@ to the model with the quadratic dewpoint term (shown above) and conduct a
 drop-in-deviance test between the model with and without the interaction term. 
 
 ```{r}
-interaction_fire_model <- glm(Target ~ ETo*avgwindspeed + solrad + avgsoiltemp + windrun + I(dewpoint^2) + 
+interaction_fire_model <- glm(Target ~ ETo*avgwindspeed + solrad + avgsoiltemp +
+                                windrun + I(dewpoint^2) + 
                                 avgairtemp, data = newestfire, 
                   family = "binomial")
 tidy(interaction_fire_model) %>%
@@ -460,8 +479,9 @@ After all these analyses/tests, our final model is:
 tidy(fire_model3) %>%
   kable(digits = 3)
 ```
-
-$$log-odds(\hat{Target})  = -6.727 + 157.331(ETo) - 0.070(solrad) + 0.434(avgsoiltemp) + 5.255(windrun) + 0.002(dewpoint^2) - 0.374(avgairtemp) - 127.386(avgwindspeed)$$
+$$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad$$
+$$+ 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp$$
+$$- 127.386avgwindspeed$$
 
 ### Conclusion
 
