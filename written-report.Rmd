@@ -606,29 +606,16 @@ newestfire_test <- newestfire_test %>%
 ```
 
 ```{r}
-#main model, with quadratic transformation on dewpoint
-fire_model_test <- glm(Target ~ ETo + solrad + avgsoiltemp + windrun + 
-                    I(dewpoint^2) + avgairtemp + avgwindspeed, 
-                   data = newestfire_test, 
-                  family = "binomial")
+x0 <- data_frame(newestfire_test)
+
+pred_probs <- predict(final_fire_model, x0, type = "response")
+newestfire_test <- newestfire_test %>%
+  mutate(predicted_prob = pred_probs)
 ```
 
 ```{r}
-resp_test <- augment(fire_model_test, type.predict = "response") %>%
-  mutate(Target = factor(Target)) %>% 
-  mutate(Target = fct_relevel(Target, c("1", "0")))
-```
-
-```{r}
-# calculate sensitivity and specificity at each threshold
-roc_curve_data_test <- resp_test %>%
-  roc_curve(Target, .fitted) %>%
-  mutate(false_rate = 1 - specificity) 
-```
-
-```{r}
-model_test <- resp_test %>% 
-  mutate(pred_resp = if_else(.fitted > 0.193, "fire", "no fire"))
+model_test <- pred_probs %>% 
+  mutate(pred_resp = if_else(pred_probs > 0.193, "fire", "no fire"))
 ```
 
 ```{r}
