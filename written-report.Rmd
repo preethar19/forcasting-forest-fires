@@ -605,7 +605,7 @@ To truly test our model, we randomly select a new set of observations from
 our original dataset and assess the model's predictive power on the new 
 data points.
 
-```{r}
+```{r include = FALSE}
 set.seed(40)
 
 newestfire_test <- newfire %>% 
@@ -613,27 +613,28 @@ newestfire_test <- newfire %>%
   sample_n(1, replace = TRUE)
 ```
 
-```{r}
+```{r include = FALSE}
 newestfire_test <- newestfire_test %>% 
   drop_na()
 ```
 
-```{r}
+```{r include = FALSE}
 pred_probs = predict(final_fire_model, newestfire_test, type = "response")
 pred_probs <- data_frame(pred_probs)
 ```
 
-```{r}
+```{r include = FALSE}
 model_test <- pred_probs %>% 
   mutate(pred_resp = if_else(pred_probs > 0.193, "fire", "no fire"))
 ```
 
-```{r}
+```{r include = FALSE}
 newestfire_test %>%
-  count(Target = 0) %>%
-  tidy()
+  filter(Target == 1) %>% 
+  count()
 ```
-
+The test dataset has 142 total observations, 8 of which indicate fires and 
+134 of which indicate non fires.
 
 ```{r}
 model_test %>% 
@@ -641,8 +642,8 @@ model_test %>%
   kable(digits = 3)
 ```
 On the new, randomly selected test dataset, the confusion matrix indicates that 
-the model correctly predicts the presence or non presence of a fire in 131/142 
-cases or 92.25% at a threshold level of 0.193.
+the model correctly predicts the presence or non presence of a fire in 138/142 
+cases or 97.18% at a threshold level of 0.193.
 
 ### Discussion
 
@@ -745,11 +746,11 @@ p13 <- ggplot(data = newestfire, aes(x = minairtemp)) +
 (p9 + p10) /(p12 + p13)
 ```
 
-To reduce multicollinearity, we decided to eliminate these variables from our
-analysis. For example, the dataset included the average, minimum and 
+The dataset included the average, minimum and 
 maximum value for a number of variables, including relative humidity and air
-temperature. We determined that the daily averages for these variables were 
-likely the most relevant value for each condition recorded by each station with
-regards to predicting fires.
+temperature. To reduce multicollinearity, we decided to eliminate these 
+variables from our analysis. We determined that the daily averages for these 
+variables were likely the most relevant value for each condition recorded by 
+each station with regards to predicting fires.
 
 
