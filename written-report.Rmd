@@ -366,8 +366,10 @@ Next, using backwards selection from main_fire_model, we construct
 new_fire_model. This was done to remove unnecessary variables and thus improve 
 the model's predictive ability.
 
-```{r}
+```{r, include = FALSE}
 new_fire_model <- step(main_fire_model, direction = "backward")
+```
+```{r}
 tidy(new_fire_model, conf.int = TRUE) %>%
   kable(digts = 3)
 ```
@@ -419,8 +421,10 @@ tidy(fire_model2) %>%
   kable(digits = 3)
 ```
 
-```{r}
+```{r include = FALSE}
 fire_model3 <- step(fire_model2, direction = "backward")
+```
+```{r}
 tidy(fire_model3, conf.int = TRUE) %>%
   kable(digits = 3)
 ```
