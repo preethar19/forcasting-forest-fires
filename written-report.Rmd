@@ -341,20 +341,20 @@ We remove the variable representing the sum of wind speed over the month
 by the large and similar vif values for both. Average relative humidity and 
 dewpoint are removed as well due to multicollinarity with average vapor 
 pressure and average air temperature, respectively.We then construct a new 
-model (main_fire_model) without the aforementioned variable.
+model (full_fire_model) without the aforementioned variable.
 
 ```{r}
 #removed variables with high multicollinearity: windrun, avgrelhum
-main_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + 
+full_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + 
                     avgwindspeed + precip + 
                     avgairtemp, data = newestfire, 
                   family = "binomial")
-tidy(main_fire_model) %>%
+tidy(full_fire_model) %>%
   kable(digits = 3)
 ```
 
 ```{r}
-vif(main_fire_model) %>%
+vif(full_fire_model) %>%
   kable(digits = 3)
 ```
 
@@ -362,20 +362,21 @@ Because the remaining vif values are 1) dissimilar from each other or 2)
 generally small, we can conclude that we have removed highly correlated 
 variables from analysis.
 
-Next, using backwards selection from main_fire_model, we construct
-new_fire_model. This was done to remove unnecessary variables and thus improve 
+Next, using backwards selection from full_fire_model, we construct
+reduced_fire_model. This was done to remove unnecessary variables and thus improve 
 the model's predictive ability.
 
 ```{r, include = FALSE}
-new_fire_model <- step(main_fire_model, direction = "backward")
+reduced_fire_model <- step(full_fire_model, direction = "backward")
 ```
+
 ```{r}
-tidy(new_fire_model, conf.int = TRUE) %>%
+tidy(reduced_fire_model, conf.int = TRUE) %>%
   kable(digts = 3)
 ```
 
 ```{r}
-glance(new_fire_model)%>%
+glance(reduced_fire_model)%>%
   select(AIC, BIC) %>%
   kable(digits = 3)
 ```
@@ -412,31 +413,31 @@ dewpoint as a predictor to our main effects model and fit a new model.
 
 ```{r}
 #main model, with quadratic transformation on dewpoint
-fire_model2 <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
+main_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
                     precip + I(dewpoint^2) + avgairtemp + avgwindspeed + 
                      avgrelhum, 
                    data = newestfire, 
                   family = "binomial")
-tidy(fire_model2) %>%
+tidy(main_fire_model) %>%
   kable(digits = 3)
 ```
 
 ```{r include = FALSE}
-fire_model3 <- step(fire_model2, direction = "backward")
+final_fire_model <- step(main_fire_model, direction = "backward")
 ```
 ```{r}
-tidy(fire_model3, conf.int = TRUE) %>%
+tidy(final_fire_model, conf.int = TRUE) %>%
   kable(digits = 3)
 ```
 
 ```{r}
-glance(fire_model3) %>%
+glance(final_fire_model) %>%
   select(AIC, BIC) %>% 
   kable(digits = 3)
 ```
 
 Adding the quadratic transformed variable, AIC has a three point improvement
-over new_fire_model, but BIC is larger. Because we have no preference 
+over main_fire_model, but BIC is larger. Because we have no preference 
 for a parsimonious model (what is indicated by a lower value of BIC), we 
 keep the quadratic term for dewpoint. Thus, our current model is:
 
@@ -468,7 +469,7 @@ tidy(interaction_fire_model) %>%
 ```
 
 ```{r}
-anova(fire_model3, interaction_fire_model, test = "Chisq") %>%
+anova(final_fire_model, interaction_fire_model, test = "Chisq") %>%
   tidy() %>%
   kable(digits = 3)
 ```
@@ -480,12 +481,26 @@ Thus, we do not include the interaction term in our final model.
 
 After all these analyses/tests, our final model is:
 ```{r}
-tidy(fire_model3) %>%
+tidy(final_fire_model) %>%
   kable(digits = 3)
 ```
 $$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad$$
 $$+ 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp$$
 $$- 127.386avgwindspeed$$
+
+This means that, holding all other variables constant, for every one unit increase
+in ETo, the odds that a fire occurs increases by 2.128 (exp(157.331)). Furthermore
+for every one unit increase in solar radiation, holding all else constant the 
+odds that a fire occurs increases by 0.932 (exp(-0.070)). Holding all other 
+variables constant, for every one unit increase in the average soil temperature, 
+the odds that a fire occurs increases by 1.543 (exp(0.434)). Additionally, 
+holding all other variables constant, a one unit increase in windrun increases 
+the odds a fire occurs by 191.521 (exp(5.255)). For everyone one unit squared 
+increase in dewpoint, holding all other variables constant, increases the odds 
+of a fire by 1.002 (exp(0.002)). Holding all other variables constant, a one unit 
+increase in average air temperature increases the odds of a fire by 0.688 
+(exp(-0.374)). Finally, holding all other variables constant, a one unit increase 
+in average wind speed increases the odds of a fire by 4.752949e-56 (exp(-127.386)).
 
 ### Conclusion
 
@@ -535,7 +550,7 @@ To test our model, we first construct an ROC curve to identify a prediction
 threshold.
 
 ```{r}
-resp_aug <- augment(fire_model3, type.predict = "response") %>%
+resp_aug <- augment(final_fire_model, type.predict = "response") %>%
   mutate(Target = factor(Target)) %>% 
   mutate(Target = fct_relevel(Target, c("1", "0")))
 ```
