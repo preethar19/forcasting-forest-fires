@@ -236,7 +236,8 @@ p1 <- ggplot(data = newestfire, aes(x = ETo)) +
   geom_histogram(fill = "red") +
   labs(x = "ETo (in)",
        y = "Count",
-       title = "Distribution of ETo (in)") +
+       title = "Distribution of ETo (in)", 
+       subtitle = "Avg amount of evapotranspiration in the soil") +
   theme_minimal(base_size = 8)
 
 p2 <- ggplot(data = newestfire, aes(x = precip)) +
@@ -245,21 +246,21 @@ p2 <- ggplot(data = newestfire, aes(x = precip)) +
   ylim(0,10) +
   labs(x = "Precip (in)",
        y = "Count",
-       title = "Distribution of Precip (in)") +
+       title = "Distribution of Precipitation (in)") +
   theme_minimal(base_size = 8)
 
 p3 <- ggplot(data = newestfire, aes(x = solrad)) +
   geom_histogram(fill = "salmon") +
   labs(x = "Sol Rad (Ly/day)",
        y = "Count",
-       title = "Distribution of Sol Rad (Ly/day)") +
+       title = "Distribution of Solar Radiation (Ly/day)") +
   theme_minimal(base_size = 8)
 
 p4 <- ggplot(data = newestfire, aes(x = avgsoiltemp)) +
   geom_histogram(fill = "orange") +
   labs(x = "Avg Soil Temp (F)",
        y = "Count",
-       title = "Distribution of Avg Soil Temp (F)") +
+       title = "Distribution of Avg Soil Temperature (F)") +
   theme_minimal(base_size = 8)
 
 p5 <- ggplot(data = newestfire, aes(x = windrun)) +
@@ -268,7 +269,8 @@ p5 <- ggplot(data = newestfire, aes(x = windrun)) +
   ylim(0,1.5) +
   labs(x = "Wind Run (miles)",
        y = "Count",
-       title = "Distribution of Wind Run (miles)") +
+       title = "Distribution of Wind Run (miles)",
+       subtitle = "Sum of wind speed over a month") +
   theme_minimal(base_size = 8)
 
 p6 <- ggplot(data = newestfire, aes(x = avgwindspeed)) +
@@ -282,7 +284,8 @@ p7 <- ggplot(data = newestfire, aes(x = dewpoint)) +
   geom_histogram(fill = "orange") +
   labs(x = "Dew Point (F)",
        y = "Count",
-       title = "Distribution of Dew Point (F)") +
+       title = "Distribution of Dew Point (F)",
+       subtitle = "average temperature of dew on the grass") +
   theme_minimal(base_size = 8)
 
 p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
@@ -292,12 +295,11 @@ p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
        title = "Distribution of Avg Relative Humidity (%)") +
   theme_minimal(base_size = 8)
 
-
 p11 <- ggplot(data = newestfire, aes(x = avgvappress)) +
   geom_histogram(fill = "salmon") +
   labs(x = "Avg Vap Pres (mBars)",
        y = "Count",
-       title = "Distribution of Avg Vap Pres (mBars)") +
+       title = "Distribution of Avg Vapor Pressure (mBars)") +
   theme_minimal(base_size = 8)
 
 p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
@@ -305,7 +307,7 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
   ylim(0,3) +
   labs(x = "Avg Air Temp (F)",
        y = "Count",
-       title = "Distribution of Avg Air Temp (F)") +
+       title = "Distribution of Avg Air Temperature (F)") +
   theme_minimal(base_size = 8)
 
 (p1 + p2 + p3)/(p4 + p5) 
