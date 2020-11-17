@@ -37,14 +37,14 @@ fire %>%
 
 Climate change represents an existential threat to humanity. Its effects have 
 the potential to dramatically shape life as we know it by creating climate 
-refugees, resource wars, and submerging major cities around the globe (citation). 
-However, unlike previous challenges to our way of life, the threat of climate 
-change will not manifest in a single event, rather in a series of natural 
+refugees, resource wars, and submerging major cities around the globe (Denchak, 
+2017). However, unlike previous challenges to our way of life, the threat of 
+climate change will not manifest in a single event, rather in a series of natural 
 disasters that will eventually escalate to a point where we no longer have the 
 resources to manage these crises. This is being seen already in California as 
 wildfires sweep the state, forcing people to relocate, causing issues with 
 access and use of electricity, and causing an estimated $10 billion in damages
-(citation). Thus, in our project, we are trying to determine what are the 
+(Louie, 2020). Thus, in our project, we are trying to determine what are the 
 strongest environmental predictors of forest fires by looking at data from 
 California. 
 
@@ -494,19 +494,26 @@ $$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad$$
 $$+ 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp$$
 $$- 127.386avgwindspeed$$
 
-This means that, holding all other variables constant, for every one unit increase
-in ETo, the odds that a fire occurs increases by 2.128 (exp(157.331)). Furthermore
-for every one unit increase in solar radiation, holding all else constant the 
-odds that a fire occurs increases by 0.932 (exp(-0.070)). Holding all other 
-variables constant, for every one unit increase in the average soil temperature, 
-the odds that a fire occurs increases by 1.543 (exp(0.434)). Additionally, 
-holding all other variables constant, a one unit increase in windrun increases 
-the odds a fire occurs by 191.521 (exp(5.255)). For everyone one unit squared 
-increase in dewpoint, holding all other variables constant, increases the odds 
-of a fire by 1.002 (exp(0.002)). Holding all other variables constant, a one unit 
-increase in average air temperature increases the odds of a fire by 0.688 
-(exp(-0.374)). Finally, holding all other variables constant, a one unit increase 
-in average wind speed increases the odds of a fire by 4.752949e-56 (exp(-127.386)).
+Holding all other variables constant, for every one unit increase
+in ETo, the odds that a fire occurs increases by 2.128 (exp(157.331)). 
+
+Holding all other variables constant, for every one unit increase in solar 
+radiation, the odds that a fire occurs increases by 0.932 (exp(-0.070)). 
+
+Holding all other variables constant, for every one unit increase in the average 
+soil temperature, the odds that a fire occurs increases by 1.543 (exp(0.434)). 
+
+Holding all other variables constant, a one unit increase in windrun increases 
+the odds a fire occurs by 191.521 (exp(5.255)). 
+
+Holding all other variables constant, every one unit squared increase in dewpoint 
+increases the odds of a fire by 1.002 (exp(0.002)). 
+
+Holding all other variables constant, a one unit increase in average air 
+temperature increases the odds of a fire by 0.688 (exp(-0.374)). 
+
+Holding all other variables constant, a one unit increase in average wind speed 
+increases the odds of a fire by 4.752949e-56 (exp(-127.386)).
 
 ### Conclusion
 
@@ -613,7 +620,7 @@ newestfire_test <- newestfire_test %>%
 
 ```{r}
 pred_probs = predict(final_fire_model, newestfire_test, type = "response")
-pred_probs <- data_frame(pred_prob)
+pred_probs <- data_frame(pred_probs)
 ```
 
 ```{r}
@@ -685,6 +692,22 @@ to AIC, with no preference for a parsimonious model. With more time, we could
 construct 1) a model with AIC as our selection criterion and 2) a model with BIC
 selection criterion and compare the two on a new randomly selected set of data 
 points to identify which has greater prediction accuracy. 
+
+### Bibliography
+CIMIS. (2020). CIMIS Overview. California Irrigation Management Information System. 
+https://cimis.water.ca.gov/Default.aspx
+
+Denchak, M. (2017). Global Climate Change: What You Need to Know. NRDC.Org. 
+https://www.nrdc.org/stories/global-climate-change-what-you-need-know
+
+Louie, D. (2020, October 10). Damage from California’s wildfires estimated at $10 
+billion, experts say; local, state, federal cooperation needed. ABC7 San Francisco. 
+https://abc7news.com/california-wildfires-cost-of-cal-fire-stanford-wildfire-research/6897462/#:%7E:text=Damage%20from%20California’s%20wildfires%20estimated%20at%20%2410%20billion%2C%20experts%20say,-KGO
+
+Zaloumis, C. & CIMIS (2020, October). California Environmental Conditions Dataset 
+(Version 2) [A collection of CIMIS recorded environmental conditions.]. 
+https://www.kaggle.com/chelseazaloumis/cimis-dataset-with-fire-target
+
 
 ### Appendix
 
