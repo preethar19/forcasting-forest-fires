@@ -188,9 +188,31 @@ newestfire <- newestfire %>%
   drop_na()
 ```
 
-Our first step of our exploratory data analysis is to look at the shape of the
-distributions of each variable. This gives us a sense of which 
-transformations might be necessary.
+Our first step of our exploratory data analysis is to look at the distribution
+of the response variable, Target, where 1 indicates a fire and 0 indicates no 
+fire.
+
+```{r, fig.height = 3, fig.wigth = 2}
+newestfire1 <- newestfire %>% 
+  mutate(Target = factor(Target)) %>% 
+  mutate(Target = case_when(Target == 0 ~ "No Fire", Target == 1 ~ "Fire"))
+
+area.color <- c("red", "pink")
+
+ggplot(data = newestfire1, mapping = aes(x = Target)) +
+  geom_bar(fill = area.color) +
+  labs(x = "Target",
+       y = "Count",
+       title = "Count of Fires vs. No Fires") +
+  theme_minimal(base_size = 8)
+```
+It's clear that our sampled data includes significantly more "No Fire" 
+observations as opposed to "Fire" observations. 
+
+The next step is to look at the shape of the distributions of each potential 
+predictor variable. This gives us a better understanding of our data and hints 
+at which distributions are exceptionally non-normal or otherwise grossly 
+affected by our data sampling procedure. 
 
 ```{r fig.width = 10, fig.height = 6}
 p1 <- ggplot(data = newestfire, aes(x = ETo)) +
@@ -224,7 +246,7 @@ p4 <- ggplot(data = newestfire, aes(x = avgsoiltemp)) +
   theme_minimal(base_size = 8)
 
 p5 <- ggplot(data = newestfire, aes(x = windrun)) +
-  geom_histogram(fill = "red")  +
+  geom_histogram(fill = "pink")  +
   xlim(0,250) +
   ylim(0,1.5) +
   labs(x = "Wind Run (miles)",
@@ -247,7 +269,7 @@ p7 <- ggplot(data = newestfire, aes(x = dewpoint)) +
   theme_minimal(base_size = 8)
 
 p8 <- ggplot(data = newestfire, aes(x = avgrelhum)) +
-  geom_histogram(fill = "orange") +
+  geom_histogram(fill = "pink") +
   labs(x = "Avg Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Avg Relative Humidity (%)") +
@@ -274,7 +296,7 @@ p14 <- ggplot(data = newestfire, aes(x = avgairtemp)) +
 (p11 + p8)/(p6 + p7+ p14)
 ```
 
-Some of the predictor variables in our dataset are not shown here as they were 
+Some of the variables in our dataset are not shown here as they were 
 not used for analysis. The plots for these variables can be found in Appendix A 
 along with an explanation for their elimination. 
 
@@ -632,30 +654,30 @@ points to identify which has greater prediction accuracy.
 
 **FIGURE A**
 
-```{r}
+```{r fig.width = 10, fig.height = 6}
 p9 <- ggplot(data = newestfire, aes(x = minrelhum)) +
-  geom_histogram(stat = "count", fill = "red") +
+  geom_histogram(fill = "red") +
   labs(x = "Min Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Min Relative Humidity (%)") +
   theme_minimal(base_size = 8)
 
 p10 <- ggplot(data = newestfire, aes(x = maxrelhum)) +
-  geom_histogram(stat = "count", fill = "orange") +
+  geom_histogram(fill = "orange") +
   labs(x = "Max Relative Humidity (%)",
        y = "Count",
        title = "Distribution of Max Relative Humidity (%)") +
   theme_minimal(base_size = 8)
 
 p12 <- ggplot(data = newestfire, aes(x = maxairtemp)) +
-  geom_histogram(stat = "count", fill = "salmon") +
+  geom_histogram(fill = "salmon") +
   labs(x = "Max Air Temp (F)",
        y = "Count",
        title = "Distribution of Max Air Temp (F)") +
   theme_minimal(base_size = 8)
 
 p13 <- ggplot(data = newestfire, aes(x = minairtemp)) +
-  geom_histogram(stat = "count", fill = "red") +
+  geom_histogram(fill = "red") +
   labs(x = "Min Air Temp (F)",
        y = "Count",
        title = "Distribution of Min Air Temp (F)") +
