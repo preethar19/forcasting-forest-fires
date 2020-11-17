@@ -206,7 +206,7 @@ ggplot(data = newestfire1, mapping = aes(x = Target)) +
        title = "Count of Fires vs. No Fires") +
   theme_minimal(base_size = 8)
 ```
-It's clear that our sampled data includes significantly more "No Fire" 
+It's clear that our sampled data include significantly more "No Fire" 
 observations as opposed to "Fire" observations. 
 
 The next step is to look at the shape of the distributions of each potential 
@@ -395,6 +395,12 @@ efforts while a high value for dewpoint could be the result of a fire.
 **************************
 To see if this hypothesis is supported by our data, we graphed the relationship
 between the log odds of our response variable, Target, and dewpoint.
+
+```{r}
+target_dew <- emplogitplot1(Target ~ dewpoint, data = newestfire, 
+                  ngroups = 5)
+```
+
 
 ```{r}
 fire_model_aug <- augment(fire_model)
