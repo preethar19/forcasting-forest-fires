@@ -181,7 +181,7 @@ newestfire <- newfire %>%
 Even after we reduced our dataset to 153 random observations, it is clear that
 there are still some stations with missing observations in some variable 
 categories. We decided to use only complete observations in the analysis, 
-and thus, the total number of observations is further reduced to 143.
+and, thus, the total number of observations is further reduced to 143.
 
 We looked at the missing observations to see if they differed at all 
 systematically from the rest of the data. 
@@ -321,7 +321,7 @@ along with an explanation for their elimination.
 
 Precipitation and average wind speed appear to be right skewed, ETo is roughly 
 trimodal, average relative humidity is bimodal, and dew point is roughly left 
-skewed. Across the board, the histograms are far from normal, the multiple peaks
+skewed. Across the board, the histograms are far from normal; the multiple peaks
 and unique spreads and distributions are likely due to limited data points and 
 California's vast geographic diversity, a hypothesis made clear by the low 
 counts shown on each graph. 
@@ -708,7 +708,7 @@ construct 1) a model with AIC as our selection criterion and 2) a model with BIC
 selection criterion and compare the two on a new randomly selected set of data 
 points to identify which has greater prediction accuracy. 
 
-### Bibliography
+### References
 CIMIS. (2020). CIMIS Overview. California Irrigation Management Information System. 
 https://cimis.water.ca.gov/Default.aspx
 
