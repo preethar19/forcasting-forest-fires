@@ -436,7 +436,7 @@ tidy(fire_model3) %>%
   kable(digits = 3)
 ```
 
-$$\hat{Target}  = -6.727 + 157.331(ETo) -0.070(solrad) + 0.434(avgsoiltemp) + 5.255(windrun) + 0.002(dewpoint^2) + -0.374(avgairtemp) -127.386(avgwindspeed)$$
+$$log-odds(\hat{Target})  = -6.727 + 157.331(ETo) -0.070(solrad) + 0.434(avgsoiltemp) + 5.255(windrun) + 0.002(dewpoint^2) + -0.374(avgairtemp) -127.386(avgwindspeed)$$
 
 ### Conclusion
 
