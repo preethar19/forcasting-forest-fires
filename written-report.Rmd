@@ -606,11 +606,8 @@ newestfire_test <- newestfire_test %>%
 ```
 
 ```{r}
-x0 <- data_frame(newestfire_test)
-
-pred_probs <- predict(final_fire_model, x0, type = "response")
-newestfire_test <- newestfire_test %>%
-  mutate(predicted_prob = pred_probs)
+pred_probs = predict(final_fire_model, newestfire_test, type = "response")
+pred_probs <- data_frame(pred_prob)
 ```
 
 ```{r}
@@ -619,8 +616,15 @@ model_test <- pred_probs %>%
 ```
 
 ```{r}
+newestfire_test %>%
+  count(Target = 0) %>%
+  tidy()
+```
+
+
+```{r}
 model_test %>% 
-  count(Target, pred_resp) %>%
+  count(pred_resp) %>%
   kable(digits = 3)
 ```
 On the new, randomly selected test dataset, the confusion matrix indicates that 
