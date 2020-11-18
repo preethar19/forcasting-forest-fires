@@ -555,9 +555,10 @@ Holding all other variables constant, for every one mile increase in the sum of
 wind speed over a month (windrun), the odds a fire occurs multiply by a factor
 of 191.521 (exp(5.255)). 
 
-Holding all other variables constant, for every one squared degree (Fahrenheit) 
-increase in the average temperature of the dew on the grass (dewpoint), the odds 
-a fire occurs are multiplied by a factor of 1.002 (exp(0.002)). 
+Holding all other variables constant, when average temperature of the dew on the 
+grass (dewpoint) changes from 39.30 degrees Fahrenheit (Q1) to 53.95 degrees
+Fahrenheit (Q3), the odds a fire occurs are expected to multiply by a factor of 
+15.37 (exp[0.002(53.95^2-39.30^2)]). 
 
 Holding all other variables constant, for every one degree Fahrenheit increase 
 in average air temperature, the odds a fire occurs are multiplied by a factor
