@@ -77,6 +77,8 @@ environmental condition feature.” The data contains a mixture of
 environmental and geospatial data to understand the size and the scope of the 
 forest fires, as well as where the fires seem to be most frequent (Zaloumis, 2020).
 
+\newpage
+
 ### Our Data
 
 There are 128,126 observations in the data set. Each observation represents 
@@ -129,6 +131,8 @@ a percentage (%).
 **`avgairtemp`** - The avgairtemp variable measures the monthly average 
 of the air temperature found in the each station's region. Average air 
 temperature is measured in degrees Fahrenheit. 
+
+\newpage
 
 ### Exploratory Data Analysis
 
@@ -347,6 +351,8 @@ California's vast geographic diversity, a hypothesis made clear by the low
 counts shown on each graph. However, these plots are still useful in their 
 current form to show the distribution of each of the variables to help inform our 
 analysis.
+
+\newpage
 
 ### Methodology
 
@@ -572,6 +578,8 @@ Holding all other variables constant, for every one mile per hour increase in
 average wind speed, the odds a fire occurs are multiplied by a factor of 
 4.752949e-56 (exp(-127.386)).
 
+\newpage
+
 ### Conclusion
 
 With a final model identified, logistic model conditions (linearity, randomness
@@ -696,6 +704,8 @@ presence or non presence of a fire 91.55% of the time at a
 threshold level of 0.193. The sampling and prediction procedure for the test
 data set are included in Appendix C.
 
+\newpage
+
 ### Discussion
 
 Based on our final model, the average amount of 
@@ -750,6 +760,8 @@ construct 1) a model with AIC as our selection criterion and 2) a model with BIC
 selection criterion and compare the two on a new randomly selected set of data 
 points to identify which has greater prediction accuracy. 
 
+\newpage
+
 ### References
 CIMIS. (2020). CIMIS Overview. California Irrigation Management Information System. 
 https://cimis.water.ca.gov/Default.aspx
@@ -765,6 +777,7 @@ Zaloumis, C. & CIMIS (2020, October). California Environmental Conditions Datase
 (Version 2) [A collection of CIMIS recorded environmental conditions.]. 
 https://www.kaggle.com/chelseazaloumis/cimis-dataset-with-fire-target
 
+\newpage
 
 ### Appendix
 
@@ -809,7 +822,7 @@ variables from our analysis. We determined that the daily averages for these
 variables were likely the most relevant value for each condition recorded by 
 each station with regards to predicting fires.
 
-
+\newpage
 
 **FIGURE B**
 
