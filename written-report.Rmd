@@ -327,22 +327,26 @@ not used for analysis. The plots for these variables can be found in Appendix A
 along with an explanation for their elimination. 
 
 ETo appears to follow a trimodal distribution with a slight right skew. 
-Precipitation follows a unimodal right skewed distribution. Solar radiation 
-appears to follow a bimodal distribution that has a slight left skew. Average 
-soil temperature is a bimodal distribution.Wind run does not have a clear 
-pattern, however the data points are more left skewed than central. Average vapor 
-pressure follows a bimodal distribution. Average relative humidity is a multimodal
-distribution. Average wind speed follows a right skewed unimodal distribution. Dew 
-point follows a left skewed  unimodal distribution. Average air temperature does 
-not have a clear pattern on the data, however the data points are more left 
-skewed than center.
+Precipitation follows a unimodal right skewed distribution. It also appears to 
+contain some outlier observations on the right side of the distribution. Solar 
+radiation appears to follow a bimodal distribution that has a slight left skew. 
+Average soil temperature is a bimodal distribution. Wind run does not have a clear 
+pattern, however the data points are more left skewed than central. There is a 
+data point that is much smaller than the others, however it is unclear if this is 
+a true outlier or a consequence of a small sample size. Average vapor pressure 
+follows a bimodal distribution. Average relative humidity is a multimodal 
+distribution. Average wind speed follows a right skewed unimodal distribution. 
+Dew point follows a left skewed  unimodal distribution. Average air temperature 
+does not have a clear pattern on the data, however the data points are more left 
+skewed than center. Furthermore, there appears to be potential outlier points on 
+the left side of the distribution.
 
 Across the board, the histograms are far from normal; the multiple peaks
 and unique spreads and distributions are likely due to limited data points and 
 California's vast geographic diversity, a hypothesis made clear by the low 
 counts shown on each graph. However, these plots are still useful in their 
-current form to show the distribution of each of the variables to help us identify
-if any transformations might be necessary.
+current form to show the distribution of each of the variables to help inform our 
+analysis.
 
 ### Methodology
 
