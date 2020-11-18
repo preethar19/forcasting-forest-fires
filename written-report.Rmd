@@ -559,11 +559,13 @@ Holding all other variables constant, for every one squared degree (Fahrenheit)
 increase in the average temperature of the dew on the grass (dewpoint), the odds 
 a fire occurs are multiplied by a factor of 1.002 (exp(0.002)). 
 
-Holding all other variables constant, a one degree Fahrenheit increase in 
-average air temperature increases the odds of a fire by 0.688 (exp(-0.374)). 
+Holding all other variables constant, for every one degree Fahrenheit increase 
+in average air temperature, the odds a fire occurs are multiplied by a factor
+of 0.688 (exp(-0.374)). 
 
-Holding all other variables constant, a one mile per hour increase in average 
-wind speed increases the odds of a fire by 4.752949e-56 (exp(-127.386)).
+Holding all other variables constant, for every one mile per hour increase in 
+average wind speed, the odds a fire occurs are multiplied by a factor of 
+4.752949e-56 (exp(-127.386)).
 
 ### Conclusion
 
@@ -685,7 +687,7 @@ The test dataset has 142 total observations, 8 of which indicate fires and
 134 of which indicate non fires.
 
 On the new randomly selected test dataset, the model correctly predicts the 
-presence or non presence of a fire in 135/143 cases or 91.55% of the time at a 
+presence or non presence of a fire 91.55% of the time at a 
 threshold level of 0.193. The sampling and prediction procedure for the test
 data set are included in Appendix C.
 
