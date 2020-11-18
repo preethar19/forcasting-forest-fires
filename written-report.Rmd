@@ -326,9 +326,18 @@ Some of the variables in our dataset are not shown here as they were
 not used for analysis. The plots for these variables can be found in Appendix A 
 along with an explanation for their elimination. 
 
-Precipitation and average wind speed appear to be right skewed, ETo is roughly 
-trimodal, average relative humidity is bimodal, and dew point is roughly left 
-skewed. Across the board, the histograms are far from normal; the multiple peaks
+ETo appears to follow a trimodal distribution with a slight right skew. 
+Precipitation follows a unimodal right skewed distribution. Solar radiation 
+appears to follow a bimodal distribution that has a slight left skew. Average 
+soil temperature is a bimodal distribution.Wind run does not have a clear 
+pattern, however the data points are more left skewed than central. Average vapor 
+pressure follows a bimodal distribution. Average relative humidity is a multimodal
+distribution. Average wind speed follows a right skewed unimodal distribution. Dew 
+point follows a left skewed  unimodal distribution. Average air temperature does 
+not have a clear pattern on the data, however the data points are more left 
+skewed than center.
+
+Across the board, the histograms are far from normal; the multiple peaks
 and unique spreads and distributions are likely due to limited data points and 
 California's vast geographic diversity, a hypothesis made clear by the low 
 counts shown on each graph. 
