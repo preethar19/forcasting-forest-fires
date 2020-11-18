@@ -640,14 +640,29 @@ newestfire_test <- newestfire_test %>%
   drop_na()
 ```
 
-```{r include = FALSE}
-pred_probs = predict(final_fire_model, newestfire_test, type = "response")
-pred_probs <- data_frame(pred_probs)
+```{r  include = FALSE}
+true_type <- newestfire_test %>%
+  pull(Target)
+
+true_type
 ```
 
-```{r include = FALSE}
-model_test <- pred_probs %>% 
-  mutate(pred_resp = if_else(pred_probs > 0.193, "fire", "no fire"))
+```{r}
+pred_log_odds <- augment(final_fire_model, newdata = newestfire_test) %>% 
+  pull(.fitted) 
+```
+
+```{r}
+pred_probs <- exp(pred_log_odds) / (1 + exp(pred_log_odds)) 
+pred_probs <- round(pred_probs,3)
+classified <- character(142)
+
+for(i in 1:142){
+  classified[i] <- if_else(pred_probs[i] > 0.193, 1, 0)
+}
+
+mean(classified == true_type) %>% 
+  kable(digits = 3)
 ```
 
 ```{r include = FALSE}
@@ -659,15 +674,10 @@ newestfire_test %>%
 The test dataset has 142 total observations, 8 of which indicate fires and 
 134 of which indicate non fires.
 
-```{r}
-model_test %>% 
-  count(pred_resp) %>%
-  kable(digits = 3)
-```
-
-On the new, randomly selected test dataset, the confusion matrix indicates that 
-the model correctly predicts the presence or non presence of a fire in 138/142 
-cases or 97.18% at a threshold level of 0.193.
+On the new randomly selected test dataset, the model correctly predicts the 
+presence or non presence of a fire in 135/143 cases or 91.55% of the time at a 
+threshold level of 0.193. The sampling and prediction procedure for the test
+data set are included in Appendix C.
 
 ### Discussion
 
@@ -782,6 +792,8 @@ variables from our analysis. We determined that the daily averages for these
 variables were likely the most relevant value for each condition recorded by 
 each station with regards to predicting fires.
 
+
+
 **FIGURE B**
 
 ```{r}
@@ -804,3 +816,43 @@ emplogitplot1(Target ~ avgairtemp, data = newestfire,
 
 ```
 
+
+
+**FIGURE C**
+
+```{r echo = T}
+set.seed(40)
+
+newestfire_test <- newfire %>% 
+  group_by(`Stn Id`) %>% 
+  sample_n(1, replace = TRUE)
+```
+
+```{r echo = T}
+newestfire_test <- newestfire_test %>% 
+  drop_na()
+```
+
+```{r echo = T}
+true_type <- newestfire_test %>%
+  pull(Target)
+
+true_type
+```
+
+```{r echo = T}
+pred_log_odds <- augment(final_fire_model, newdata = newestfire_test) %>% 
+  pull(.fitted) 
+```
+
+```{r echo = T}
+pred_probs <- exp(pred_log_odds) / (1 + exp(pred_log_odds)) 
+pred_probs <- round(pred_probs,3)
+classified <- character(142)
+
+for(i in 1:142){
+  classified[i] <- if_else(pred_probs[i] > 0.193, 1, 0)
+}
+
+mean(classified == true_type)
+```
