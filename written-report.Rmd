@@ -58,7 +58,7 @@ With this in mind, we can try to correct these conditions through policy and
 practice to see if it is at all feasible to mitigate the threat of forest 
 fires in our future. Second, if we know what predictors play a role in 
 predicting fires, fire fighting personnel may better understand which 
-environmental or meteorological conditions present a greater fire risk and 
+environmental or meteorological conditions present a greater fire risk and will
 hopefully prepare accordingly. Thus, while climate change will continue to 
 affect our way of life, insights into how to manage its immediate consequences
 are evidently necessary.
@@ -86,10 +86,9 @@ There are 128,126 observations in the data set. Each observation represents
 information on the weather conditions at a given weather station on a specific 
 date.
 
-The response variable we are investigated is Target, which corresponds to 
-fires on the respective observation date, in the observation region. The Target 
-variable is a binary indicator, with a value of 1 indicating there was a fire 
-and a value of 0 indicating there was not a fire.
+The response variable we investigated is Target, a binary indicator, with a 
+value of 1 indicating there was a fire and a value of 0 indicating there was 
+not a fire on a particular day at a particular weather station.
 
 Our potential predictor variables are:
 
@@ -102,13 +101,13 @@ precpitation found in the each station's region in the days prior to the
 recording. Precipitation is measured in inches.
 
 **`solrad`** - The solrad variable measures the average amount of solar 
-radiation found in the each station's region in the prior days. Solar radiation
+radiation found in each station's region. Solar radiation
 is measured in Langley/day, which can be understood as about half a Watt per 
 square meter.
 
 **`avgvappress`** - The avgvappress variable measures the average amount of
-vapor pressure found in the each station's region in the days leading up to the 
-recorded day. Average vapor pressure is measured in mBars.
+vapor pressure found in the each station's region. Average vapor pressure is 
+measured in mBars.
 
 **`avgsoiltemp`** -  The avgsoiltemp variable measures the average soil 
 temperature found in the each station's region. Average soil temperature is 
@@ -158,7 +157,7 @@ newfire <- fire %>%
 As previously stated, the dataset contains observations of weather conditions 
 and indicates the presence of a fire on a specific date at a certain weather
 station in California. Each of the stations in our dataset has recorded 
-observations of these weather conditions between 2018 and summer 2020. 
+observations of these weather conditions between 2018 and fall 2020. 
 Because the conditions recorded by one station will likely be similar to those 
 in a nearby station and similar to the recordings the day before, we 
 simulate independence by filtering our data. 
@@ -174,7 +173,7 @@ data.
 Additionally, constructing a model with a random sample of the data allows us to
 test our final model on a separate sample of data to assess its predictive 
 power.
-The sampling procedule also allows us to ensure 
+The sampling procedure also allows us to ensure 
 that randomness and independence is satisfied for our analysis. 
 Whether a fire is reported or not is no longer conditional
 on surrounding stations and surrounding environmental variables, as each 
@@ -333,22 +332,22 @@ along with an explanation for their elimination.
 
 ETo appears to follow a trimodal distribution with a slight right skew. 
 Precipitation follows a unimodal right skewed distribution. It also appears to 
-contain some outlier observations on the right side of the distribution. Solar 
+contain some outlier observations on the high end of the distribution. Solar 
 radiation appears to follow a bimodal distribution that has a slight left skew. 
 Average soil temperature is a bimodal distribution. Wind run does not have a 
-clear pattern, however the data points are more left skewed than central. There 
-is a data point that is much smaller than the others, however it is unclear if 
+clear pattern, however the data points are more left skewed than normal. There 
+is an observation that is much smaller than the others, however it is unclear if 
 this is a true outlier or a consequence of a small sample size. Average vapor 
 pressure follows a bimodal distribution. Average relative humidity is a 
 multimodal distribution. Average wind speed follows a right skewed unimodal 
-distribution. Dew point follows a left skewed  unimodal distribution. Average 
-air temperature does not have a clear pattern on the data, however the data 
-points are more left skewed than center. Furthermore, there appears to be 
-potential outlier points on the left side of the distribution.
+distribution. Dew point follows a left skewed unimodal distribution. Average 
+air temperature does not have a clear pattern, however, the data 
+points are more left skewed than normal. Furthermore, there appear to be 
+potential outliers to the left of the distribution.
 
 Across the board, the histograms are far from normal; the multiple peaks
-and unique spreads and distributions are likely due to limited data points and 
-California's vast geographic diversity, a hypothesis made clear by the low 
+and unique spreads and distributions are likely due to limited data points, 
+a hypothesis made clear by the low 
 counts shown on each graph. However, these plots are still useful in their 
 current form to show the distribution of each of the variables to help inform 
 our analysis.
@@ -359,7 +358,7 @@ our analysis.
 
 Our aim was to predict the presence of a fire with a binary response 
 variable, Target (which indicates the presence or non presence of a fire);
-therefore we used a logistic regression for our analysis. 
+therefore we used logistic regression for our analysis. 
 
 After identifying our regression method, we began to construct prediction 
 models. We started first with a main effects model, **fire_model**, containing 
@@ -376,7 +375,7 @@ tidy(fire_model) %>%
 
 Because the only significant terms in this model are the term for average
 soil temperature and solar radiation (the only terms with an associated p.value
-of less than 0.05), we suspected multicollinearity amongst variables. 
+of less than 0.05), we suspected multicollinearity among variables. 
 We used vif to further investigate this issue.
 
 ```{r}
@@ -407,7 +406,7 @@ vif(full_fire_model) %>%
 ```
 
 Because the remaining vif values are 1) dissimilar from each other or 2) 
-generally small, we safely concluded that we removed all highly correlated 
+generally small, we safely concluded that we had removed all highly correlated 
 variables from analysis.
 
 Next, using backwards selection from **full_fire_model**, we constructed
@@ -432,7 +431,7 @@ glance(reduced_fire_model)%>%
 This gave us **reduced_fire_model**:
 $$log-odds(\hat{Target})  = -15.229 - 0.0118340solrad + 0.2580629avgsoiltemp$$
 
-We then tried out various variable transformations to potentially bolster the 
+We then tried out various variable transformations to (potentially) bolster the 
 predictive power of our model.
 
 From a theoretical perspective, it is likely that our response variable, the 
@@ -484,7 +483,8 @@ glance(final_fire_model) %>%
 ```
 
 Adding the quadratic transformed variable, AIC has a three point improvement
-over **reduced_fire_model**, but BIC is larger. Because we have no preference 
+over **reduced_fire_model**. BIC, however, is larger. 
+Because we have no preference 
 for a parsimonious model (what is indicated by a lower value of BIC), we 
 keep the quadratic term for dewpoint. Thus, our current model is 
 **final_fire_model**:
@@ -532,6 +532,7 @@ tidy(final_fire_model) %>%
 $$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad$$
 $$+ 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp$$
 $$- 127.386avgwindspeed$$
+
 We can now interpret the coefficients of our model with our original research 
 question in mind. 
 
@@ -589,8 +590,9 @@ To check linearity, we calculated an empirical logistic regression plot for each
 of the predictor variables. The empirical logit plots can be found in Appendix 
 B.
 
-Potential violations of linearity are apparent in the
-plots for solar radiation (solrad), (windrun), and average wind speed 
+Potential violations of linearity are apparent in the empirical logit
+plots for solar radiation (solrad), the sum of
+wind speed over a month (windrun), and average wind speed 
 (avgwindspeed). However, the violations are not egregious enough to suggest that 
 there is no linear relationship between the empirical logit and the predictor 
 variables.
