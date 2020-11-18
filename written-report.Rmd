@@ -340,7 +340,9 @@ skewed than center.
 Across the board, the histograms are far from normal; the multiple peaks
 and unique spreads and distributions are likely due to limited data points and 
 California's vast geographic diversity, a hypothesis made clear by the low 
-counts shown on each graph. 
+counts shown on each graph. However, these plots are still useful in their 
+current form to show the distribution of each of the variables to help us identify
+if any transformations might be necessary.
 
 ### Methodology
 
