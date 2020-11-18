@@ -75,7 +75,8 @@ of the dataset adds that this dataset was “used in conjunction to building an
 XGBoost Classifier to accurately predict probability for fire given 
 environmental condition feature.” The data contains a mixture of 
 environmental and geospatial data to understand the size and the scope of the 
-forest fires, as well as where the fires seem to be most frequent (Zaloumis, 2020).
+forest fires, as well as where the fires seem to be most frequent 
+(Zaloumis, 2020).
 
 \newpage
 
@@ -334,23 +335,23 @@ ETo appears to follow a trimodal distribution with a slight right skew.
 Precipitation follows a unimodal right skewed distribution. It also appears to 
 contain some outlier observations on the right side of the distribution. Solar 
 radiation appears to follow a bimodal distribution that has a slight left skew. 
-Average soil temperature is a bimodal distribution. Wind run does not have a clear 
-pattern, however the data points are more left skewed than central. There is a 
-data point that is much smaller than the others, however it is unclear if this is 
-a true outlier or a consequence of a small sample size. Average vapor pressure 
-follows a bimodal distribution. Average relative humidity is a multimodal 
-distribution. Average wind speed follows a right skewed unimodal distribution. 
-Dew point follows a left skewed  unimodal distribution. Average air temperature 
-does not have a clear pattern on the data, however the data points are more left 
-skewed than center. Furthermore, there appears to be potential outlier points on 
-the left side of the distribution.
+Average soil temperature is a bimodal distribution. Wind run does not have a 
+clear pattern, however the data points are more left skewed than central. There 
+is a data point that is much smaller than the others, however it is unclear if 
+this is a true outlier or a consequence of a small sample size. Average vapor 
+pressure follows a bimodal distribution. Average relative humidity is a 
+multimodal distribution. Average wind speed follows a right skewed unimodal 
+distribution. Dew point follows a left skewed  unimodal distribution. Average 
+air temperature does not have a clear pattern on the data, however the data 
+points are more left skewed than center. Furthermore, there appears to be 
+potential outlier points on the left side of the distribution.
 
 Across the board, the histograms are far from normal; the multiple peaks
 and unique spreads and distributions are likely due to limited data points and 
 California's vast geographic diversity, a hypothesis made clear by the low 
 counts shown on each graph. However, these plots are still useful in their 
-current form to show the distribution of each of the variables to help inform our 
-analysis.
+current form to show the distribution of each of the variables to help inform 
+our analysis.
 
 \newpage
 
@@ -456,11 +457,10 @@ dewpoint as a predictor to our main effects model and fit a new model,
 
 ```{r}
 #main model, with quadratic transformation on dewpoint
-main_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + windrun + 
-                    precip + I(dewpoint^2) + avgairtemp + avgwindspeed + 
-                     avgrelhum, 
-                   data = newestfire, 
-                  family = "binomial")
+main_fire_model <- glm(Target ~ ETo + solrad + avgvappress + avgsoiltemp + 
+                         windrun + precip + I(dewpoint^2) + avgairtemp + 
+                         avgwindspeed + avgrelhum, data = newestfire, 
+                       family = "binomial")
 tidy(main_fire_model) %>%
   kable(digits = 3)
 ```
@@ -763,18 +763,20 @@ points to identify which has greater prediction accuracy.
 \newpage
 
 ### References
-CIMIS. (2020). CIMIS Overview. California Irrigation Management Information System. 
-https://cimis.water.ca.gov/Default.aspx
+CIMIS. (2020). CIMIS Overview. California Irrigation Management Information 
+System. https://cimis.water.ca.gov/Default.aspx
 
 Denchak, M. (2017). Global Climate Change: What You Need to Know. NRDC.Org. 
 https://www.nrdc.org/stories/global-climate-change-what-you-need-know
 
-Louie, D. (2020, October 10). Damage from California’s wildfires estimated at $10 
-billion, experts say; local, state, federal cooperation needed. ABC7 San Francisco. 
-https://abc7news.com/california-wildfires-cost-of-cal-fire-stanford-wildfire-research/6897462/#:%7E:text=Damage%20from%20California’s%20wildfires%20estimated%20at%20%2410%20billion%2C%20experts%20say,-KGO
+Louie, D. (2020, October 10). Damage from California’s wildfires estimated at 
+$10 billion, experts say; local, state, federal cooperation needed. ABC7 San 
+Francisco. https://abc7news.com/california-wildfires-cost-of-cal-fire-stanford-
+wildfire-research/6897462/#:%7E:text=Damage%20from%20California’s%20wildfires%20
+estimated%20at%20%2410%20billion%2C%20experts%20say,-KGO
 
-Zaloumis, C. & CIMIS (2020, October). California Environmental Conditions Dataset 
-(Version 2) [A collection of CIMIS recorded environmental conditions.]. 
+Zaloumis, C. & CIMIS (2020, October). California Environmental Conditions 
+Dataset (Version 2) [A collection of CIMIS recorded environmental conditions.]. 
 https://www.kaggle.com/chelseazaloumis/cimis-dataset-with-fire-target
 
 \newpage
