@@ -75,7 +75,7 @@ of the dataset adds that this dataset was “used in conjunction to building an
 XGBoost Classifier to accurately predict probability for fire given 
 environmental condition feature.” The data contains a mixture of 
 environmental and geospatial data to understand the size and the scope of the 
-forest fires, as well as where the fires seem to be most frequent.
+forest fires, as well as where the fires seem to be most frequent (Zaloumis, 2020).
 
 ### Our Data
 
