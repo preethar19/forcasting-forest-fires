@@ -561,27 +561,8 @@ With a final model identified, logistic model conditions (linearity, randomness
 and independence) was assessed.
 
 To check linearity, we calculated an empirical logistic regression plot for each 
-of the predictor variables. 
-
-```{r}
-par(mfrow = c(3,3))
-
-emplogitplot1(Target ~ ETo, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ solrad, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ avgsoiltemp, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ windrun, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ avgwindspeed, data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ I(dewpoint^2), data = newestfire, 
-                  ngroups = 5)
-emplogitplot1(Target ~ avgairtemp, data = newestfire, 
-                  ngroups = 5)
-
-```
+of the predictor variables. The empirical logit plots can be found in Appendix 
+B.
 
 Potential violations of linearity are apparent in the
 plots for solar radiation (solrad), (windrun), and average wind speed 
@@ -801,4 +782,25 @@ variables from our analysis. We determined that the daily averages for these
 variables were likely the most relevant value for each condition recorded by 
 each station with regards to predicting fires.
 
+**FIGURE B**
+
+```{r}
+par(mfrow = c(3,3))
+
+emplogitplot1(Target ~ ETo, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ solrad, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgsoiltemp, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ windrun, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgwindspeed, data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ I(dewpoint^2), data = newestfire, 
+                  ngroups = 5)
+emplogitplot1(Target ~ avgairtemp, data = newestfire, 
+                  ngroups = 5)
+
+```
 
