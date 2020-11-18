@@ -504,27 +504,47 @@ tidy(final_fire_model) %>%
 $$log-odds(\hat{Target})  = -6.727 + 157.331ETo - 0.070solrad$$
 $$+ 0.434avgsoiltemp + 5.255windrun + 0.002(dewpoint^2) - 0.374avgairtemp$$
 $$- 127.386avgwindspeed$$
+We can now interpret the coefficients of our model with our original research 
+question in mind. 
 
-Holding all other variables constant, for every one unit increase
-in ETo, the odds that a fire occurs increases by 2.128 (exp(157.331)). 
+If the priority is to identify the strongest environmental predictors 
+of forest fires in California, our model indicates that the average amount of 
+evapotranspiration present in the soil (ETo), average soil temperature, the sum
+of wind speed over a month (windrun), and the average temperature of the dew on 
+the grass (dewpoint) should all be taken into consideration. A one unit increase
+in any of these predictors, to varied degrees, increases the odds of a fire
+existing at a particular weather station. Conversely, our model indicates that 
+a one unit increase in average air temperature, solar radiation, or average wind
+speed decreases the odds of a fire existing at a particular weather station.
 
-Holding all other variables constant, for every one unit increase in solar 
-radiation, the odds that a fire occurs increases by 0.932 (exp(-0.070)). 
+More specifically, our model shows that:
+
+Holding all other variables constant, for every one inch increase
+in the average amount of evapotranspiration present in the soil (ETo), the odds 
+that a fire occurs increases by 2.128 (exp(157.331)). 
+
+Holding all other variables constant, for every one Langley/day increase in 
+solar radiation (can be understood as about half a Watt per square meter), the 
+odds that a fire occurs increases by 0.932 (exp(-0.070)). 
 
 Holding all other variables constant, for every one unit increase in the average 
 soil temperature, the odds that a fire occurs increases by 1.543 (exp(0.434)). 
 
-Holding all other variables constant, a one unit increase in windrun increases 
+Holding all other variables constant, a one mile increase in the sum of wind 
+speed over a month (windrun) increases 
 the odds a fire occurs by 191.521 (exp(5.255)). 
 
-Holding all other variables constant, every one unit squared increase in dewpoint 
+##############################################################################
+Holding all other variables constant, every one degree Farenheit squared 
+increase in the average temperature of the dew on the grass (dewpoint)
 increases the odds of a fire by 1.002 (exp(0.002)). 
+##############################################################################
 
-Holding all other variables constant, a one unit increase in average air 
-temperature increases the odds of a fire by 0.688 (exp(-0.374)). 
+Holding all other variables constant, a one degree Fahrenheit increase in 
+average air temperature increases the odds of a fire by 0.688 (exp(-0.374)). 
 
-Holding all other variables constant, a one unit increase in average wind speed 
-increases the odds of a fire by 4.752949e-56 (exp(-127.386)).
+Holding all other variables constant, a one mile per hour increase in average 
+wind speed increases the odds of a fire by 4.752949e-56 (exp(-127.386)).
 
 ### Conclusion
 
@@ -671,12 +691,12 @@ respective variables are naturally occurring meteorological features. While we
 can identify these conditions, not much can be done to alter these conditions
 in the short run. Therefore, our findings can only help identify the conditions
 that make a fire likely, but give little insight into what we can do to stop a 
-forest fire. Being able to identify these conditions can help make the
-proper authorities aware of the possibility that a fire is likely. 
-However, even once they are aware of the conditions for forest fires as 
-suggested by our model, it is probably too late to be able to do anything 
-to effectively prevent the fire at that point, and firefighting measures 
-can only be reactive from there.
+forest fire. Being able to identify these conditions can help to automate the 
+process of notifying the proper authorities of the odds a fire will occur at a 
+particular station. However, even once they are aware of the conditions for 
+forest fires as suggested by our model, it is probably too late to be able to 
+do anything to effectively prevent the fire at that point, and firefighting 
+measures can only be reactive from there.
 
 The reliability and validity of our data certainly comes into question. As 
 previously stated, a single data point was randomly chosen from each station 
