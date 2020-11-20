@@ -13,7 +13,7 @@ regions throughout California, a state with a particularly high number of forest
 fires. We performed a logistic regression analysis to determine which 
 environmental variables are the greatest predictors of forest fires. Based on 
 our final model, the most impactful factors are ETo, solar radiation, soil 
-temperature, wind run, air tempertaure, and windspeed.
+temperature, wind run, dewpoint, air tempertaure, and windspeed.
 
 **Codebook**
 
